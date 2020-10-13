@@ -371,7 +371,7 @@ PrefabInstance:
     - target: {fileID: 6897710790838796557, guid: b5f91fa07aaa91244b7fdb7fdcbf3245,
         type: 3}
       propertyPath: m_Name
-      value: take-2_DEFAULT_ZLW
+      value: CharacterWithJoints
       objectReference: {fileID: 0}
     - target: {fileID: 7629887990214800158, guid: b5f91fa07aaa91244b7fdb7fdcbf3245,
         type: 3}
