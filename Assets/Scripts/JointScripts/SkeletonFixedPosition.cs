@@ -26,6 +26,9 @@ public class SkeletonFixedPosition : MonoBehaviour
     {
         //Modify all joints based on difference between startpos and current pos
         hipsNode.gameObject.transform.position = hipStartPos;
+        
+        //TODO: Make the model always face the same way no matter the direction of the real animation
+        //      For the sake of easier calculations.
     }
 
 }
