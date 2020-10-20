@@ -24,4 +24,10 @@ public class JointGizmo : MonoBehaviour
         Gizmos.DrawLine(gameObject.transform.position,
             gameObject.transform.position + gameObject.transform.forward.normalized * gizmoLineLength);
     }
+
+    private void Update()
+    {
+        // Get local position
+        //pos = transform.position - root.transform.position
+    }
 }
