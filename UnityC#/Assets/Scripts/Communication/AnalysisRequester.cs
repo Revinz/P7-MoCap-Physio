@@ -17,6 +17,7 @@ public interface IRealTimeRequester
     void Update();
 }
 
+[Serializable]
 public class AnalysisRequester : RunAbleThread, IRealTimeRequester
 {
     public static JointsData data = new JointsData(new Joint[0]);
@@ -45,10 +46,11 @@ public class AnalysisRequester : RunAbleThread, IRealTimeRequester
 
             while (Running) //Keep sending latest data to the server for analysis
             {
+                //Might want to check if the data has been updated and only send if it has - to increase performance.
                 string jsonToSend = "ERROR HAPPENED";
                 lock (AnalysisRequester.data)
-                {
-                    jsonToSend = AnalysisRequester.data.json;
+                {                   
+                    jsonToSend = JsonUtility.ToJson(data);
                     Debug.Log(jsonToSend);
                     client.SendFrame(jsonToSend);
                 }
@@ -85,24 +87,17 @@ public class AnalysisRequester : RunAbleThread, IRealTimeRequester
 [Serializable]
 public class JointsData
 {
-
-    public string json = "";
-    public List<JointDTO> jointDTOs = new List<JointDTO>();
+    public JointDTO[] jointDTOs = new JointDTO[0];
 
     public JointsData(Joint[] joints)
     {
-        json += "{";
-        // First convert them to DTOs
-        foreach (Joint joint in joints)
+        //Update the jointDTOs array with new joints.
+        jointDTOs = new JointDTO[joints.Length];
+        for (int i = 0; i < joints.Length; i++)
         {
-            JointDTO dto = new JointDTO(joint);
-            json += dto.Json() + ",";
-
+            jointDTOs[i] = new JointDTO(joints[i]);
         }
-        
-        json += "}";
 
-        Debug.Log(json);
     }
 
 }
