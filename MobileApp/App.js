@@ -3,6 +3,8 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 //To test if AsyncStorage is working
 import AsyncStorage from "@react-native-async-storage/async-storage";
+//test if RNFS works
+var RNFS = require("react-native-fs");
 
 export default function App() {
   return (

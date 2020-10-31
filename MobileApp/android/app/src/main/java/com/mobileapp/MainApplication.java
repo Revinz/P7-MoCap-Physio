@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nullable;
 
+import com.rnfs.RNFSPackage;
+
 public class MainApplication extends Application implements ReactApplication {
   private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(
     new BasePackageList().getPackageList()
@@ -43,6 +45,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       List<ReactPackage> packages = new PackageList(this).getPackages();
       packages.add(new ModuleRegistryAdapter(mModuleRegistryProvider));
+      //This was required in previous versions, (and is incl. in the configuration guide)
+      //but because of automatic linking this will give an error 
+      //instead for trying to override existing package
+      // - Patrick.
+      //packages.add(new RNFSPackage()); 
       return packages;
     }
 
