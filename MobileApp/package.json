@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "expo": "~39.0.2",
+    "expo-camera": "^9.0.0",
     "expo-gl": "^9.1.1",
     "expo-gl-cpp": "^9.1.2",
     "expo-splash-screen": "~0.6.2",
