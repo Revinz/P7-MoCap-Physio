@@ -1,0 +1,15 @@
+
+SETUP GUIDE
+
+(Read the 'info.txt' as well)
+
+DOWNLOAD REQUIRED VIDEOS HERE (cut videos): https://drive.google.com/drive/folders/1irrNmunCD2qbgysbDerJT3Oxt7kMZv32?usp=sharing
+Note: it is a link to our shared drive 'root/implementation/DatasetVideos/videos' folder
+(optional) download original videos here: https://drive.google.com/drive/folders/1-9hsC9iJHSHYaSS3R7f_jiJeD2KntwVi?usp=sharing
+Note: it is a link to our shared drive 'root/implementation/DatasetVideos/original_videos/VideoClips' folder
+      These videos are unorded, but you can tell the difference based on the file names
+
+Place the downloaded folders (e.g. clamshell, squat etc.) into the 'Python/videos' folder (create it if it doesn't exist)
+
+run 'src/dataset_generation/dataset'generator.py'
+with your desired settings (adjusted in the file itself).

@@ -1,0 +1,39 @@
+
+Info about original videos: 
+
+- Amount of videos: 5 videos of each exercise.
+- length: between 3-15 seconds.
+
+Missing videos so far:
+
+- 4 videos for one leg squat
+
+- 1 video for squat
+
+----------------------------------------------------
+
+Info about dataset generation:
+
+For each video there is x amount of excerpts made
+that will consist of n frames
+
+Possible excerpt output types
+ - 'original' - Original frames
+ - 'flipped' - Flipped frames (horizontally)
+
+ Maybe if we need more data: 
+ - Reverse order
+ - Slowed down by 2 (Skipping half the amount of frames as specified in the settings)
+ - Sped up by 2 (Skipping 2x the amount of frames as specified in the settings)
+ - more???
+
+The output will only be the frames in image format, not in video format.
+
+Output location : src/dataset/<exercise name>/<video id>/<frame number>
+    - video id = something like "video_1"
+    - frame number = 1, 2, 3, 4 etc.
+
+Note:   you will still need to generate the dataset that contains the joint locations yourself
+        using these generated frames and the MobileNet neural network model.
+        (You can try to look into if saving the data in a .csv is possible -
+         instead of having to remake the dataset data all the time.)
