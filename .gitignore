@@ -169,3 +169,7 @@ package-lock.json
 # Android memory profiler files
 *.hprof
 
+# Do not upload videos and generated dataset
+/Python/dataset
+/Python/videos
+/Python/venv/
