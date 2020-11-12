@@ -70,8 +70,8 @@ totalExcerptToBeGenerated = amountOfExcerptsPerVid * amountOfVideos * len(
 print(f'Total excerpts to be generated: {totalExcerptToBeGenerated}')
 
 
-# If padding ends up being required, simply add implementation here
-def pad_image(frame):
+# If padding/resizing ends up being required, simply add implementation here
+def preprocess_frame(frame):
     return frame
 
 
@@ -148,7 +148,7 @@ for exercise in exercises:
                         frameToSave = videoFrames[frameNumber]
 
                         # Pad the image (Not implemented, but here in case it is required - simply implement the function for padding)
-                        frameToSave = pad_image(frameToSave)
+                        frameToSave = preprocess_frame(frameToSave)
 
                         # Process the image according to the excerpt type
                         if (excerptType == "original"):
