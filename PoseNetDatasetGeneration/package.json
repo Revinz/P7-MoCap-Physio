@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "@canvas/image": "^1.0.1",
+    "@tensorflow-models/posenet": "^2.2.1",
+    "@tensorflow/tfjs": "^2.7.0",
+    "@tensorflow/tfjs-node": "^2.7.0",
+    "botkit": "^4.10.0",
+    "cairo": "^0.1.0-alpha.3",
+    "canvas": "^2.6.1",
+    "csv-parser": "^2.3.3",
+    "csv-writer": "^1.6.0",
+    "debug": "^3.2.6",
+    "fs": "^0.0.1-security",
+    "image-size": "^0.9.3",
+    "ml5": "^0.6.0",
+    "node-gyp": "^7.1.2",
+    "pango": "^0.0.3",
+    "pkg-config": "^1.1.1",
+    "recursive-readdir": "^2.2.2",
+    "rollup": "^2.33.1",
+    "tiny-worker": "^2.3.0",
+    "webworker": "^0.8.4"
+  }
+}

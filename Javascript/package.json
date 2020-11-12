@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "@tensorflow-models/posenet": "^2.2.1",
-    "@tensorflow/tfjs": "^2.7.0",
-    "@tensorflow/tfjs-node": "^2.7.0",
-    "debug": "^3.2.6",
-    "fs": "^0.0.1-security"
-  }
-}
