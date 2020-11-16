@@ -1,0 +1,10 @@
+
+SETUP GUIDE:
+
+1) Generate the dataset from the python dataset generation script.
+
+>>> IMPORTANT: DO NOT MOVE THE GENERATED DATASET!
+
+2) Run 'posedataset.js'
+
+3) Voila!
