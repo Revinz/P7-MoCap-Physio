@@ -27,8 +27,11 @@ data = pd.read_csv('PoseDataset.csv')  # Reads the file & sorts data into column
 target = data["exercise"]  # Extracts only the target for later prediction
 print("target: ", target)
 
-data.drop(["exercise"], inplace=True, axis=1)  # Removes both exercise & filepath columns.
+# Removes unnecessary columns
+data.drop(["exercise"], inplace=True, axis=1)
 data.drop(["File Path"], inplace=True, axis=1)
+data.drop(["FolderID"], inplace=True, axis=1)
+data.drop(["Frame Number"], inplace=True, axis=1)
 print("sorted data:  ", data)
 
 #-----------ATTEMPT 1, Works with target but not the 17 body joint samples--------------------------------------------
