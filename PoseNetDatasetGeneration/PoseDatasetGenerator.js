@@ -4,6 +4,7 @@ var pn = require("@tensorflow-models/posenet");
 const { createCanvas, Image } = require("canvas");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 var recursive = require("recursive-readdir");
+var pathSort = require("path-sort").standalone("/");
 
 /**
  *
@@ -96,16 +97,16 @@ async function GenerateDataset() {
 
   //Find All files in dataset directory
   recursive(pyDataset, function (err, files) {
-    //files = files.slice(0, 10);
-    totalFiles = files.length;
+    files.sort(pathSort);
     //console.log(files);
+    totalFiles = files.length;
 
     //Then generate dataset
     for (let i = 0; i < totalFiles; i++) {
       const path = files[i];
+      console.log(path);
       GetPose(path).then((pose) => {
         SavePose(path, pose);
-        console.log(path);
       });
       progress++;
       console.log(`Progress: ${progress}/${totalFiles}`);

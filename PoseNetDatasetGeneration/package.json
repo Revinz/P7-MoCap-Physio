@@ -13,11 +13,14 @@
     "fs": "^0.0.1-security",
     "image-size": "^0.9.3",
     "ml5": "^0.6.0",
+    "natural-compare": "^1.4.0",
     "node-gyp": "^7.1.2",
     "pango": "^0.0.3",
+    "path-sort": "^0.1.0",
     "pkg-config": "^1.1.1",
     "recursive-readdir": "^2.2.2",
     "rollup": "^2.33.1",
+    "sort-paths": "^1.1.1",
     "tiny-worker": "^2.3.0",
     "webworker": "^0.8.4"
   }
