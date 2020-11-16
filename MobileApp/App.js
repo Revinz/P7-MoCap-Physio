@@ -16,17 +16,22 @@ import TensorflowTestComponent from "./TensorflowTestComponent";
 
 
 export default function App() {
-  const [toggleButton, setButton] = useState(null);
-  const [camera, setCamera] = useState(null);
-  const [hasPermission, setHasPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const captureDelayMS = 0;
-  const options = { quality: 0.5, base64: true, skipProcessing: false };
+  let [toggleButton, setButton] = useState(null);
+  let [camera, setCamera] = useState(null);
+  let [hasPermission, setHasPermission] = useState(null);
+  let [type, setType] = useState(Camera.Constants.Type.back);
+  let captureDelayMS = 5000;
+  let pictureSaved = async(data) => {
+    /* console.log("Image is saved");
+    const source = data.uri;
+    console.log("uri: ", source); */
+  }
+  var options = { quality: 0.5, base64: true, skipProcessing: false, onPictureSaved:pictureSaved};
   var recording = false;  
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
+      var { status } = await Camera.requestPermissionsAsync();
       setHasPermission(status === 'granted');
       
     })();
@@ -39,28 +44,29 @@ export default function App() {
     return <Text>No access to camera</Text>;
   }
 
-  const ToggleRecording = async() => {
+  var ToggleRecording = async() => {
     
-    recording = !recording
+    
+    recording = !recording;
     
     if(recording) {
-      toggleButton.setState({textValue: 'Stop recording'})
+      toggleButton.setState({title: 'Stop recording'});
       //this.ToggleButton.setState({textValue: 'Stop recording'});
       CaptureImage();
     } else {
-      toggleButton.setState({title: 'Start recording'})
+      toggleButton.setState({title: 'Start recording'});
       //this.ToggleButton.setState({textValue: 'Start recording'});
     }
   }
 
-  const CaptureImage = async() =>
+  var CaptureImage = async() =>
   {
     if(camera) {
       console.log("Taking picture")
-      const data = await camera.takePictureAsync(options);
-      console.log("Took picture")
-      const source = data.uri;
-      console.log("uri: ", source);
+      
+      
+      await camera.takePictureAsync(options);
+      
       //console.log("path: ", source.path); returns undefined
       if (recording) {
       setTimeout(CaptureImage, captureDelayMS); // Run function again after delay
@@ -72,14 +78,14 @@ export default function App() {
     }
   }
   
-  const handleSave = async (photo) => {
+  var handleSave = async (photo) => {
     /* const permission = await Permissions.getAsync(Permissions.CAMERA_ROLL);
     if (permission.status !== 'granted') {
       const newPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (newPermission.status === 'granted') {
       }
     if (permission.status === "granted") { */
-      const assert = await MediaLibrary.createAssetAsync(photo);
+      var assert = await MediaLibrary.createAssetAsync(photo);
       await MediaLibrary.createAlbumAsync("Test", assert);
     /* } else {
       console.log("No permission");
@@ -93,7 +99,7 @@ export default function App() {
         <View style={styles.lightbulb}>
         <Image source={require('./images/lightbulb.png')} />
         </View>
-        <View style={{ flex: 6, flexDirection: 'column' }}>
+        <View style={styles.hintText}>
           <View style={{ flex: 1, fontSize: 12}}>
             <Text style={styles.boldText}>Remember!</Text>
           </View>
@@ -105,7 +111,7 @@ export default function App() {
         <Text style={styles.standardText}>Burger menu</Text>
         </View>
       </View>
-      <Camera ref={ref => setCamera(ref)} style={{ flex: 6 }} type={type}>
+      <Camera ref={ref => setCamera(ref)} style={{ flex: 6 }} type={type} onCameraReady={console.log("Camera ready")}>
         <View
           style={styles.cameraview}>
           <TouchableOpacity
@@ -142,6 +148,10 @@ const styles = StyleSheet.create({
     height: 50,
     flex: 1,
     padding: 20,
+  },
+  hintText: {
+    flex: 6,
+    flexDirection: 'column',
   },
   cameraview: {
     flex: 1,
