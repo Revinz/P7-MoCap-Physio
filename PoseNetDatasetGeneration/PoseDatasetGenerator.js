@@ -75,6 +75,9 @@ const csvWriter = createCsvWriter({
     { id: "leftAnkle", title: "Left Ankle" },
     { id: "label", title: "exercise" },
     { id: "filepath", title: "File Path" },
+
+    { id: "pathID", title: "FolderID" },
+    { id: "frameNumber", title: "Frame Number" },
   ],
   append: false,
 });
@@ -97,7 +100,7 @@ async function GenerateDataset() {
 
   //Find All files in dataset directory
   recursive(pyDataset, function (err, files) {
-    files.sort(pathSort);
+    //files = files.splice(0, 5);
     //console.log(files);
     totalFiles = files.length;
 
@@ -111,7 +114,6 @@ async function GenerateDataset() {
       progress++;
       console.log(`Progress: ${progress}/${totalFiles}`);
     }
-
     console.log("\n Finished  - Please check if the labels look correct");
     console.log("\n if they are incorrect, change 'labels_index' in line 25");
   });
@@ -148,8 +150,12 @@ function SavePose(filepath, pose) {
 
   //Include file name and label for exercise
   data[0]["filepath"] = filepath;
+  split_path = filepath.split("\\");
   data[0]["label"] = filepath.split("\\")[label_index]; //Split path and take labels from the correct position in the array
 
+  //Add folder ID and frame number to sort by in python script
+  data[0]["pathID"] = split_path[2] + split_path[3] + split_path[4]; //Just the path to the folder that has the images
+  data[0]["frameNumber"] = split_path[split_path.length - 1].split("_")[0]; //Just the first number of eg. 4_47 -> 4
   csvWriter.writeRecords(data);
 }
 

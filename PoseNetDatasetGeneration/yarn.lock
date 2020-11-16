@@ -743,8 +743,30 @@
     "minimist" "^1.2.0"
     "through2" "^3.0.1"
 
+"csv-sort@^3.1.1":
+  "integrity" "sha512-QjKIxqiicRu7pPVHUvWA1aeWpBW7iFXGLBWm/o9uXuc5wZ8eOGG2xSiYMY3G3Xx3jaRoJ4BbwWJndjV7zm5tCw=="
+  "resolved" "https://registry.npmjs.org/csv-sort/-/csv-sort-3.1.1.tgz"
+  "version" "3.1.1"
+  dependencies:
+    "csv-split-easy" "^3.1.1"
+    "currency.js" "^2.0.3"
+    "is-numeric" "^0.0.9"
+    "lodash.pull" "^4.1.0"
+
+"csv-split-easy@^3.1.1":
+  "integrity" "sha512-F1MCanMEU6GP9xZw5gELE5xImcmSDHi9b6muUTKn8QF6AjrJP16EI1qHNITWtootJccku+lfjjhp5ELmIt7fPA=="
+  "resolved" "https://registry.npmjs.org/csv-split-easy/-/csv-split-easy-3.1.1.tgz"
+  "version" "3.1.1"
+  dependencies:
+    "string-remove-thousand-separators" "^3.0.73"
+
 "csv-writer@^1.6.0":
   "version" "1.6.0"
+
+"currency.js@^2.0.3":
+  "integrity" "sha512-3rtzulRMwUJHmH0EPKiO/taYEGWlLSG2rpBOaHhfaY1dPGqK595mjg4t4bksy7glHEPZry7l5xSpXECs1eFrWg=="
+  "resolved" "https://registry.npmjs.org/currency.js/-/currency.js-2.0.3.tgz"
+  "version" "2.0.3"
 
 "d3-array@^2.3.0", "d3-array@^2.5.1", "d3-array@^2.7.0", "d3-array@^2.7.1", "d3-array@>=2.5", "d3-array@1 - 2":
   "version" "2.8.0"
@@ -1362,6 +1384,11 @@
 "is-number@^7.0.0":
   "version" "7.0.0"
 
+"is-numeric@^0.0.9":
+  "integrity" "sha512-Uw52EJz+uEnanfDFCf2TJSjJFjFQ2mL5HZOXFNBolJCvdxAhRBZ4qTbggQpaXQTGsB/tgtFBBTe5l2hSGw2RnQ=="
+  "resolved" "https://registry.npmjs.org/is-numeric/-/is-numeric-0.0.9.tgz"
+  "version" "0.0.9"
+
 "is-stream@^1.0.1", "is-stream@^1.1.0":
   "version" "1.1.0"
 
@@ -1501,11 +1528,21 @@
 "lodash.once@^4.0.0":
   "version" "4.1.1"
 
+"lodash.pull@^4.1.0":
+  "integrity" "sha1-YAYMxr1iW01FZ+wn3EXNG+nuwBI="
+  "resolved" "https://registry.npmjs.org/lodash.pull/-/lodash.pull-4.1.0.tgz"
+  "version" "4.1.0"
+
 "lodash.sortby@^4.7.0":
   "version" "4.7.0"
 
 "lodash.tonumber@^4.0.3":
   "version" "4.0.3"
+
+"lodash.trim@^4.5.1":
+  "integrity" "sha1-NkJefukL5KpeJ7zruFt9EepHqlc="
+  "resolved" "https://registry.npmjs.org/lodash.trim/-/lodash.trim-4.5.1.tgz"
+  "version" "4.5.1"
 
 "lodash.trimend@^4.5.1":
   "version" "4.5.1"
@@ -1953,6 +1990,34 @@
 "range-parser@~1.2.1":
   "version" "1.2.1"
 
+"ranges-apply@^3.2.4":
+  "integrity" "sha512-oYUOq8xoaJ2CPkZPNu9xHjrsiUlLyqqQdPByx9Cl8of45GUPCfTn5i3JTKtiftDQRG89535xz5wgXvzhGOAicw=="
+  "resolved" "https://registry.npmjs.org/ranges-apply/-/ranges-apply-3.2.4.tgz"
+  "version" "3.2.4"
+  dependencies:
+    "ranges-merge" "^5.0.4"
+
+"ranges-merge@^5.0.4":
+  "integrity" "sha512-B5aRtF+G7COGp9Wa8VW3tgjIaOaMBnqGAEMs4fgJHGTk3hQFOM94QJ5l4a01J8IzRLs1WHl3DopfQch48e6+QA=="
+  "resolved" "https://registry.npmjs.org/ranges-merge/-/ranges-merge-5.0.4.tgz"
+  "version" "5.0.4"
+  dependencies:
+    "ranges-sort" "^3.13.4"
+
+"ranges-push@^3.7.23":
+  "integrity" "sha512-hQ6O5cSQvovW1BeE5NOfYkdNSRmKx2HORJPc2tcnl8JmJcgUHNAdA3VgzlSN351TrYTyTVeAf+/9tcIAGXPQVg=="
+  "resolved" "https://registry.npmjs.org/ranges-push/-/ranges-push-3.7.23.tgz"
+  "version" "3.7.23"
+  dependencies:
+    "ranges-merge" "^5.0.4"
+    "string-collapse-leading-whitespace" "^3.0.3"
+    "string-trim-spaces-only" "^2.8.24"
+
+"ranges-sort@^3.13.4":
+  "integrity" "sha512-6WJP3vf9sFai3IkRqUiLF1ckLsPe2Hetjare0OaOrcw665XQWvNDcGSxxgxTaaCKFcNZwD5rzwnYUG7xcsN1Xg=="
+  "resolved" "https://registry.npmjs.org/ranges-sort/-/ranges-sort-3.13.4.tgz"
+  "version" "3.13.4"
+
 "raw-body@2.4.0":
   "version" "2.4.0"
   dependencies:
@@ -2174,6 +2239,27 @@
   "version" "1.1.1"
   dependencies:
     "safe-buffer" "~5.1.0"
+
+"string-collapse-leading-whitespace@^3.0.3":
+  "integrity" "sha512-UuPzS8WE+Obvh+CHYR/XiE8XNbPUrDNRIuQEAhugxEYr1IYVMQqt2e+9PzkcrqQ/c5/nXDbPDfCrtDQlw+2j3A=="
+  "resolved" "https://registry.npmjs.org/string-collapse-leading-whitespace/-/string-collapse-leading-whitespace-3.0.3.tgz"
+  "version" "3.0.3"
+
+"string-remove-thousand-separators@^3.0.73":
+  "integrity" "sha512-AWZMMEaw+NiCGgtn0cDvOx4RzWPjikDWUxFxRVoV34z9c8jILwOE7eVTuVeixMPtR6+ayijCX82qk969vIdsxQ=="
+  "resolved" "https://registry.npmjs.org/string-remove-thousand-separators/-/string-remove-thousand-separators-3.0.73.tgz"
+  "version" "3.0.73"
+  dependencies:
+    "is-numeric" "^0.0.9"
+    "lodash.isplainobject" "^4.0.6"
+    "lodash.trim" "^4.5.1"
+    "ranges-apply" "^3.2.4"
+    "ranges-push" "^3.7.23"
+
+"string-trim-spaces-only@^2.8.24":
+  "integrity" "sha512-4aHbFBqaCDJ6vYG4Gtn9Sx9KJAzPjlnwXpqYHpDCg0uQ62Qwgf9OG6b3JVRSESZGXCVLKdYCXPiOSSvxh9a0GA=="
+  "resolved" "https://registry.npmjs.org/string-trim-spaces-only/-/string-trim-spaces-only-2.8.24.tgz"
+  "version" "2.8.24"
 
 "string-width@^1.0.1":
   "version" "1.0.2"
