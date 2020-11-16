@@ -173,3 +173,5 @@ package-lock.json
 /Python/dataset
 /Python/videos
 /Python/venv/
+
+/node_modules
