@@ -101,13 +101,15 @@ async function GenerateDataset() {
     //console.log(files);
 
     //Then generate dataset
-    files.forEach((path) => {
+    for (let i = 0; i < totalFiles; i++) {
+      const path = files[i];
       GetPose(path).then((pose) => {
         SavePose(path, pose);
+        console.log(path);
       });
       progress++;
       console.log(`Progress: ${progress}/${totalFiles}`);
-    });
+    }
 
     console.log("\n Finished  - Please check if the labels look correct");
     console.log("\n if they are incorrect, change 'labels_index' in line 25");
