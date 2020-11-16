@@ -26,7 +26,7 @@ amountOfFramesPerExcerpt = 5
 # ex. (framesToSkip = 5): frame 0 and frame 6
 framesToSkip = 5
 
-#Write the folder names for each of the excercises
+# Write the folder names for each of the excercises
 exercises = 'ClamShells GluteBridge \
     SingleLegDeadlift Squat'.split()
 
@@ -52,14 +52,14 @@ output_folder = "dataset"
 
 random.seed(random_seed)
 
-#Count how many original videos there are (for calculation of how many outputs there will be)
+# Count how many original videos there are (for calculation of how many outputs there will be)
 p = Path.cwd()  # get current dir
 p = Path(videos_path)  # directory that we want to count all the files in
 f = [y for y in p.rglob(f'*')]
-#get all unique files and count them
+# get all unique files and count them
 values, counts = np.unique(
     [x.parent for x in f],
-    return_counts=True)  #get all unique files and count them
+    return_counts=True)  # get all unique files and count them
 # -len(exercises) because the above also counts a directory and this removes the directory count
 amountOfVideos = -len(exercises)
 for count in counts:  # get sum of files
@@ -72,11 +72,14 @@ print(f'Total excerpts to be generated: {totalExcerptToBeGenerated}')
 
 # If padding/resizing ends up being required, simply add implementation here
 def preprocess_frame(frame):
+    # print("original", frame)
+    frame = cv.resize(frame,(256, 256)) # Recommended size for ML datasets.
+    # print("resized", frame)
     return frame
 
 
 def gen_flipped(frame):
-    return cv.flip(frame, 1)  #Flips left to right (aka horizontally)
+    return cv.flip(frame, 1)  # Flips left to right (aka horizontally)
 
 
 def gen_original(frame):
@@ -94,7 +97,7 @@ print("Creating new files...")
 progress = 0
 # Starting generating the new files
 for exercise in exercises:
-    #Create directory, incl. missing parent folders, for the exercise
+    # Create directory, incl. missing parent folders, for the exercise
     pathlib.Path(f'{output_folder}/{exercise}').mkdir(parents=True,
                                                       exist_ok=True)
 
@@ -102,7 +105,7 @@ for exercise in exercises:
     for filename in os.listdir(f'{videos_path}/{exercise}'):
         video_path = f'{videos_path}/{exercise}/{filename}'
 
-        #Open the video
+        # Open the video
         vidcap = cv.VideoCapture(video_path)
 
         # Get all the frames from the video
@@ -123,7 +126,7 @@ for exercise in exercises:
 
         for i in range(0, amountOfExcerptsPerVid):
 
-            #Starting frame index
+            # Starting frame index
             startIndex = random.randint(
                 0, totalFrames - (amountOfFramesPerExcerpt *
                                   (framesToSkip + 1)) - 1)
@@ -137,11 +140,11 @@ for exercise in exercises:
                 savedImgCount = 0
                 for frameNumber in range(startIndex, totalFrames - 1):
 
-                    #Skip the rest of the frames when enough frames have been saved.
+                    # Skip the rest of the frames when enough frames have been saved.
                     if (savedImgCount >= amountOfFramesPerExcerpt):
                         break
 
-                    #Don't save frames that should be skipped
+                    # Don't save frames that should be skipped
                     #   Remove +1 if you want every nth frame instead of every n+1th frame.
                     if (frameNumber - lastSavedFrameNumber >=
                             framesToSkip + 1):
@@ -160,11 +163,11 @@ for exercise in exercises:
                                 f'Can not process except type of "{excerptType}". Did you misspell it?'
                             )
 
-                        #Create folder path for the output
+                        # Create folder path for the output
                         pathlib.Path(f'{excerpt_path}').mkdir(parents=True,
                                                               exist_ok=True)
-                        #Save the frame
-                        #Might want to subtract the startIndex to start the img count from 0 instead of the startIndex number
+                        # Save the frame
+                        # Might want to subtract the startIndex to start the img count from 0 instead of the startIndex number
                         cv.imwrite(
                             f'{excerpt_path}/{frameNumber}.{imgFileType}',
                             frameToSave)

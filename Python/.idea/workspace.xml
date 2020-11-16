@@ -20,10 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6f4e7c9-8e0c-4e63-8c61-e7d7362d9ff0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/P7MoCap.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/P7MoCap.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dataset_generation/dataset_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataset_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataset_generator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,6 +206,8 @@
       <workItem from="1604916791450" duration="10000" />
       <workItem from="1604919047149" duration="2484000" />
       <workItem from="1604922389357" duration="7000" />
+      <workItem from="1605276361679" duration="2322000" />
+      <workItem from="1605450430801" duration="4040000" />
     </task>
     <servers />
   </component>
@@ -230,29 +230,29 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="2005" height="323" key="GridCell.Tab.0.bottom" timestamp="1604921606718">
+    <state width="2005" height="323" key="GridCell.Tab.0.bottom" timestamp="1605455145590">
       <screen x="0" y="0" width="2048" height="1152" />
     </state>
-    <state width="2005" height="323" key="GridCell.Tab.0.bottom/0.0.2048.1152@0.0.2048.1152" timestamp="1604921606718" />
-    <state width="2005" height="323" key="GridCell.Tab.0.center" timestamp="1604921606718">
+    <state width="2005" height="323" key="GridCell.Tab.0.bottom/0.0.2048.1152@0.0.2048.1152" timestamp="1605455145590" />
+    <state width="2005" height="323" key="GridCell.Tab.0.center" timestamp="1605455145590">
       <screen x="0" y="0" width="2048" height="1152" />
     </state>
-    <state width="2005" height="323" key="GridCell.Tab.0.center/0.0.2048.1152@0.0.2048.1152" timestamp="1604921606718" />
-    <state width="2005" height="323" key="GridCell.Tab.0.left" timestamp="1604921606718">
+    <state width="2005" height="323" key="GridCell.Tab.0.center/0.0.2048.1152@0.0.2048.1152" timestamp="1605455145590" />
+    <state width="2005" height="323" key="GridCell.Tab.0.left" timestamp="1605455145590">
       <screen x="0" y="0" width="2048" height="1152" />
     </state>
-    <state width="2005" height="323" key="GridCell.Tab.0.left/0.0.2048.1152@0.0.2048.1152" timestamp="1604921606718" />
-    <state width="2005" height="323" key="GridCell.Tab.0.right" timestamp="1604921606718">
+    <state width="2005" height="323" key="GridCell.Tab.0.left/0.0.2048.1152@0.0.2048.1152" timestamp="1605455145590" />
+    <state width="2005" height="323" key="GridCell.Tab.0.right" timestamp="1605455145590">
       <screen x="0" y="0" width="2048" height="1152" />
     </state>
-    <state width="2005" height="323" key="GridCell.Tab.0.right/0.0.2048.1152@0.0.2048.1152" timestamp="1604921606718" />
+    <state width="2005" height="323" key="GridCell.Tab.0.right/0.0.2048.1152@0.0.2048.1152" timestamp="1605455145590" />
     <state x="58" y="241" key="SettingsEditor" timestamp="1604919618066">
       <screen x="0" y="0" width="2048" height="1152" />
     </state>
     <state x="58" y="241" key="SettingsEditor/0.0.2048.1152@0.0.2048.1152" timestamp="1604919618066" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/dataset_generator_py$dataset_generator__1_.coverage" NAME="dataset_generator (1) Coverage Results" MODIFIED="1604920316979" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/dataset_generator_py$dataset_generator__1_.coverage" NAME="dataset_generator (1) Coverage Results" MODIFIED="1605452619649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/dataset_generator_py$dataset_generator.coverage" NAME="dataset_generator Coverage Results" MODIFIED="1604919918786" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/dataset_generation" />
   </component>
 </project>
