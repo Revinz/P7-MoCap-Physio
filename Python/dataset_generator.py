@@ -169,7 +169,7 @@ for exercise in exercises:
                         # Save the frame
                         # Might want to subtract the startIndex to start the img count from 0 instead of the startIndex number
                         cv.imwrite(
-                            f'{excerpt_path}/{frameNumber}.{imgFileType}',
+                            f'{excerpt_path}/{savedImgCount}_{frameNumber}.{imgFileType}',
                             frameToSave)
 
                         savedImgCount += 1
