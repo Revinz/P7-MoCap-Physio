@@ -13,12 +13,12 @@ var recursive = require("recursive-readdir");
 
 // IMPORTANT: You change the architecture here (you will be required to change it to the one we will be using)
 // https://github.com/tensorflow/tfjs-models/blob/master/posenet/README.md
-const width = 640;
-const height = 480;
+const width = 256;
+const height = 256;
 let PoseNetSettings = {
   architecture: "MobileNetV1",
   outputStride: 16,
-  inputResolution: { width: 640, height: 480 }, //Must match the
+  inputResolution: { width: width, height: height }, //Must match the
   multiplier: 0.75,
 };
 
