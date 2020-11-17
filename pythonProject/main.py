@@ -43,6 +43,8 @@ model.summary()
 history = model.fit(x_train, y_train, epochs=400, validation_data=(x_test, y_test))
 
 results = model.predict(x_test)
+print(results.size)
+
 plt.scatter(range(20), results, c='b')
 plt.scatter(range(20), y_test, c='g')
 plt.show()

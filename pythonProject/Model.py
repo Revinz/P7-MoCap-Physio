@@ -1,3 +1,4 @@
+import sklearn
 from keras.models import Sequential
 # from keras.layers import Dense
 from keras.layers import LSTM
@@ -30,16 +31,6 @@ from keras.layers import Bidirectional
 
 # Data preparation
 data = pd.read_csv('SortedPoseDataSet.csv')  # Reads the file & sorts data into columns
-# for i in range(6):
-#    print("DATA FOR ROW", i, data.iloc[i, 18])  # Prints row 0-6, column 18 to see if it matches excel
-
-# -------------ATTEMPT 2, Prints out the same data, no way to see if its actually seperated into time series-------------
-# https://stackabuse.com/solving-sequence-problems-with-lstm-in-keras/
-# data.values.reshape(-1,5,1)
-# for i in range(6):
-#     print("data: ", data.iloc[i,1])
-# --------------------------------------------------------END OF ATTEMPT------------------------------------------------
-
 
 data["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
 
@@ -60,8 +51,6 @@ data.drop(data.columns[0], inplace=True, axis=1) # Remove the mystery first colu
 #print("sorted data:  ", data)
 
 #--------------------------------------------------------------------------------------------------
-#
-
 data[["noseX", "noseY"]] = data.Nose.str.split(",", expand=True)
 
 data[["Right EyeX", "Right EyeY"]] = data["Right Eye"].str.split(",", expand=True)
@@ -107,16 +96,24 @@ data.drop(["Right Ankle"], inplace=True, axis=1)
 data.drop(["Left Ankle"], inplace=True, axis=1)
 #--------------------------------------------------------------------------------------------------
 
-data[] = pd.to_numeric(data)
+#print(data["Right AnkleX"])
 
-for i in range(34):
-    res = isinstance(data.iloc[10, i], str)
-    print("Is variable a string ? : " + str(res))
+data = data.astype(np.float32)
+
+#print(data["Right AnkleX"])
+
+# for i in range(34):
+#     res = isinstance(data.iloc[10, i], str)
+#     print("Is variable a string ? : " + str(res))
 
 data = pd.DataFrame(data).to_numpy()
 target = pd.DataFrame(target).to_numpy()
 #print("Converted to np: ", data)
 
+#data = sklearn.preprocessing.normalize(data, norm="l1")
+#target = sklearn.preprocessing.normalize(target, norm="l1")
+
+#print(data[0])
 #print("Data: \n", data)
 print("DATA DTYPE: ", data.dtype)
 print("TARGET DTYPE: ", target.dtype)
@@ -126,37 +123,42 @@ data = array(data).reshape(180, 5, 34)
 #print("Data shape; ", data.shape)
 #print("Target: \n", target)
 #print("Target shape: ", target.shape)
+
+#-------------------------------------------------------------------------------
+# Not using this atm
+
+# model = Sequential()
+# model.add(LSTM(50, activation='relu', input_shape=(5, 34)))
+# model.add(Dense(1))
+# model.compile(optimizer='adam', loss='mse')
+# history = model.fit(data, target, epochs=1000, validation_split=0.2, verbose=1)
+#-------------------------------------------------------------------------------
+
+
 # Split data into test and training
 x_train, x_test, y_train, y_test = train_test_split(data, target, test_size=0.2, random_state=4)
 
 # # RNN model
-#model = Sequential()
+model = Sequential()
 
-# None is set if we don't know the number of inputs in our data
-# 5 is length of input sequence, Set to None for variable size inputs
-# 17 is length of each vector
+# batch_input_shape=(a, b, c)
+# a: Set to None if we don't know the number of inputs in our data
+# b: Length of input sequence, Set to None for variable size inputs
+# c: Length of each vector
 # return_sequences  TRUE will return output after every node
 #                   FALSE will return just one output at the last node
 
 # 1 is ouput size
-# model.add(LSTM((1),batch_input_shape=(None, 5, 17), return_sequences=True))
-# model.add(LSTM((1),return_sequences=False))
-# #
-# model.compile(loss='mean_absolute_error', optimizer='adam', metrics=['accuracy'])
-# model.summary()
-# history = model.fit(x_train, y_train, epochs=400, validation_data=(x_test, y_test))
+model.add(LSTM(1, batch_input_shape=(None, 5, 34), return_sequences=True))
+model.add(LSTM(1, return_sequences=False))
 #
-
-model = Sequential()
-model.add(LSTM(50, activation='relu', input_shape=(5, 34)))
-model.add(Dense(1))
-model.compile(optimizer='adam', loss='mse')
-history = model.fit(data, target, epochs=1000, validation_split=0.2, verbose=1)
-
-# results = model.predict(x_test)
-# plt.scatter(range(20), results, c='b')
-# plt.scatter(range(20), y_test, c='g')
-# plt.show()
-# #
-# plt.plot(history.history['loss'])
-# plt.show()
+model.compile(loss='mean_absolute_error', optimizer='adam', metrics=['accuracy'])
+model.summary()
+history = model.fit(x_train, y_train, epochs=400, validation_data=(x_test, y_test))
+results = model.predict(x_test)
+plt.scatter(range(results.size), results, c='b')
+plt.scatter(range(results.size), y_test, c='g')
+plt.show()
+#
+plt.plot(history.history['loss'])
+plt.show()
