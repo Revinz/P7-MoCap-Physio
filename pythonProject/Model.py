@@ -13,15 +13,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Data preparation
-data = pd.read_csv('PoseDataset.csv')  # Reads the file & sorts data into columns
+data = pd.read_csv('SortedPoseDataset.csv')  # Reads the file & sorts data into columns
 #for i in range(6):
 #    print("DATA FOR ROW", i, data.iloc[i, 18])  # Prints row 0-6, column 18 to see if it matches excel
 
 #-------------ATTEMPT 2, Prints out the same data, no way to see if its actually seperated into time series-------------
 # https://stackabuse.com/solving-sequence-problems-with-lstm-in-keras/
 # data.values.reshape(-1,5,1)
-# for i in range(6):
-#     print("data: ", data.iloc[i,1])
+for i in range(5):
+    print("data: ", data.iloc[i,19])
 #--------------------------------------------------------END OF ATTEMPT------------------------------------------------
 
 target = data["exercise"]  # Extracts only the target for later prediction
