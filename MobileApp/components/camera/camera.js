@@ -15,6 +15,7 @@ import { Permissions } from "expo";
 //import { captureRef } from 'react-native-view-shot';
 import { Camera } from "expo-camera";
 import React, { useState, useEffect, useRef, Component } from "react";
+import ExerciseCounter from "../ExerciseCounter.js";
 
 /**
  *
@@ -115,6 +116,7 @@ const CameraScene = () => {
 
   return (
     <View style={styles.main}>
+      <ExerciseCounter />
       <View style={styles.header}>
         <View style={styles.lightbulb}>
           {/*<Image source={require("./images/lightbulb.png")} />*/}
