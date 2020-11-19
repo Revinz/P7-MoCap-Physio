@@ -12,11 +12,17 @@ from sklearn.preprocessing import minmax_scale
 import time
 # Data preparation
 data = pd.read_csv('SortedPoseDataSet.csv')  # Reads the file & sorts data into columns
+#data = pd.read_csv('SortedPoseDataSetV2.csv')  # Dataset 2, 10 frames & 2 skips
+
+nFrames = 10  # Length of frames pr. Sequences. **Change when changing datasets!**
 
 data["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
 
 target = data["exercise"]  # Extracts only the target for later prediction
-target = target[0:900:5]
+
+target = target[0::nFrames]
+
+nSeq = len(target)  # Total number of sequences
 
 #res = type(target) == str
 # print result
@@ -114,8 +120,7 @@ target = pd.DataFrame(target).to_numpy()
 # print("Data: \n", data)
 # print("DATA DTYPE: ", data.dtype)
 # print("TARGET DTYPE: ", target.dtype)
-
-data = array(data).reshape(180, 5, 34)
+data = array(data).reshape(nSeq, nFrames, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
 
 # Split data into test and training
 x_train, x_test, y_train, y_test = train_test_split(data, target, test_size=0.2, random_state=4)
@@ -223,13 +228,14 @@ x_train, x_test, y_train, y_test = train_test_split(data, target, test_size=0.2,
 # -------------------------------------------------------------------------------
 # MODEL 5
 model = Sequential()
-model.add(LSTM(200, activation='relu', return_sequences=True, input_shape=(5, 34)))
+model.add(LSTM(200, activation='relu', return_sequences=True, input_shape=(nFrames, 34)))
 model.add(LSTM(100, activation='relu', return_sequences=True))
 model.add(LSTM(50, activation='relu', return_sequences=True))
 model.add(LSTM(25, activation='relu'))
 model.add(Dense(20, activation='relu'))
 model.add(Dense(10, activation='relu'))
 model.add(Dense(4, activation='softmax'))
+# model.add(Dense(1)) - replace with soft
 
 model.compile(loss="sparse_categorical_crossentropy", optimizer='adam', metrics=['accuracy'])
 #model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
@@ -251,10 +257,10 @@ np.set_printoptions(suppress=True)
 
 start_time = time.time()
 # Predict on first video
-test_output = model.predict(data[0:1, :, :], verbose=0)
+#test_output = model.predict(data[0:1, :, :], verbose=0)
 
 # Predict on all videos
-# test_output = model.predict(data, verbose=0)
+test_output = model.predict(data, verbose=0)
 
 print("Prediction time: %0.3f seconds" % (time.time() - start_time))
 print("Prediction: ", test_output)
