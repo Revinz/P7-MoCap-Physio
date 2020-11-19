@@ -8,42 +8,35 @@ from keras.layers import Flatten, LSTM
 from keras.layers.core import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import minmax_scale
-
 import time
-# Data preparation
-data = pd.read_csv('SortedPoseDataSet.csv')  # Reads the file & sorts data into columns
-#data = pd.read_csv('SortedPoseDataSetV2.csv')  # Dataset 2, 10 frames & 2 skips
-
-nFrames = 10  # Length of frames pr. Sequences. **Change when changing datasets!**
+# ______________________________________________Data preparation________________________________________
+data = pd.read_csv('SortedPoseDataSetV2.csv')  # Which dataset to read, change versions with V1, V2, V3, etc.
 
 data["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
-
 target = data["exercise"]  # Extracts only the target for later prediction
 
-target = target[0::nFrames]
-
+nFrames = np.amax(data["Frame Number"]) + 1  # Length of frames pr. Sequences.
+target = target[0::nFrames]  # Splits target into the total number of sequences
 nSeq = len(target)  # Total number of sequences
-
-#res = type(target) == str
+# res = type(target) == str
 # print result
-#print("Is variable a string ? : " + str(res))
+# print("Is variable a string ? : " + str(res))
 
 # Remove the columns we don't need.
+# Drop all unnecessary data columns
 data.drop(["exercise"], inplace=True, axis=1)
 data.drop(["File Path"], inplace=True, axis=1)
 data.drop(["FolderID"], inplace=True, axis=1)
 data.drop(["Frame Number"], inplace=True, axis=1)
-data.drop(data.columns[0], inplace=True, axis=1) # Remove the mystery first column
+data.drop(data.columns[0], inplace=True, axis=1)  # Remove the mystery first column
 #print("dtypes: ", data.dtypes)
 #print("sorted data:  ", data)
 
-#--------------------------------------------------------------------------------------------------
 columns = list(data)
 for i in columns:
     data[[i + "X", i + "Y"]] = data[[i][0]].str.split(",", expand=True)
     # print(data[[i + "X", i + "Y"]])
     data.drop([i], inplace=True, axis=1)
-
 # data[["noseX", "noseY"]] = data.Nose.str.split(",", expand=True)
 #
 # data[["Right EyeX", "Right EyeY"]] = data["Right Eye"].str.split(",", expand=True)
@@ -90,7 +83,7 @@ for i in columns:
 #--------------------------------------------------------------------------------------------------
 
 #print(data["Right AnkleX"])
-
+# Convert data from string values to float
 data = data.astype(np.float32)
 #target = data.astype(np.float32)
 #print(data["Right AnkleX"])
@@ -98,7 +91,7 @@ data = data.astype(np.float32)
 # for i in range(34):
 #     res = isinstance(data.iloc[10, i], str)
 #     print("Is variable a string ? : " + str(res))
-
+# Convert dataset to numpy to allow easier reshaping
 data = pd.DataFrame(data).to_numpy()
 target = pd.DataFrame(target).to_numpy()
 #print("Converted to np: ", data)
@@ -109,12 +102,11 @@ target = pd.DataFrame(target).to_numpy()
 
 #data = data / np.amax(data)
 #target = target / 3  # 3+1 is number of possible exercises
-
-#data = sklearn.preprocessing.minmax_scale(data)
+data = sklearn.preprocessing.minmax_scale(data)  # Normalizes data. NOT target since its categorical.
 #target = sklearn.preprocessing.minmax_scale(target)
 
-# data = sklearn.preprocessing.normalize(data, norm="l1")
-# target = sklearn.preprocessing.normalize(target, norm="l1")
+#data = sklearn.preprocessing.normalize(data, norm="l1")
+#target = sklearn.preprocessing.normalize(target, norm="l1")
 
 # print(data[0])
 # print("Data: \n", data)
@@ -122,9 +114,9 @@ target = pd.DataFrame(target).to_numpy()
 # print("TARGET DTYPE: ", target.dtype)
 data = array(data).reshape(nSeq, nFrames, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
 
+# ______________________________________________Model Training________________________________________________________
 # Split data into test and training
 x_train, x_test, y_train, y_test = train_test_split(data, target, test_size=0.2, random_state=4)
-
 # print("Data: \n", data)
 # print("Data shape; ", data.shape)
 # print("Target: \n", target)
@@ -235,37 +227,30 @@ model.add(LSTM(25, activation='relu'))
 model.add(Dense(20, activation='relu'))
 model.add(Dense(10, activation='relu'))
 model.add(Dense(4, activation='softmax'))
-# model.add(Dense(1)) - replace with soft
+# model.add(Dense(1)) #- replace with soft for better anomaly detection
 
+# Can use mse or mean_absolute_error instead of crossentrophy
 model.compile(loss="sparse_categorical_crossentropy", optimizer='adam', metrics=['accuracy'])
-#model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
 
 start_time = time.time()
 history = model.fit(x_train, y_train, epochs=250, validation_data=(x_test, y_test))
 print("Fit time: %0.2f seconds" % (time.time() - start_time))
-#history = model.fit(x_train, y_train, epochs=250, validation_data=(x_test, y_test))
 
 results = model.predict(x_test, verbose=0)
-
 np.set_printoptions(suppress=True)
-
 # -------------------------------------------------------------------------------
 # PREDICTION
 # print("1: ", data[0:1, :, :])
 # print("2: ", data[1:2, :, :])
 # print("3: ", data[0:2, :, :])
-
 start_time = time.time()
-# Predict on first video
-#test_output = model.predict(data[0:1, :, :], verbose=0)
 
-# Predict on all videos
+# Predict on first sequence ONLY
+# test_output = model.predict(data[0:1, :, :], verbose=0)
+
+# Predict on all sequences
 test_output = model.predict(data, verbose=0)
-
 print("Prediction time: %0.3f seconds" % (time.time() - start_time))
 print("Prediction: ", test_output)
-
-# -------------------------------------------------------------------------------
-# SAVE MODEL
-
+# -------------------------------------------Saving & Exporting Model------------------------------------------------
 # model.save('saved_model/my_model')

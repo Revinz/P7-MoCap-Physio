@@ -6,40 +6,44 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import seaborn as sns
+import sklearn
+# ______________________________________________Data preparation________________________________________
+data = pd.read_csv('SortedPoseDataSetV2.csv')  # Which dataset to read, change versions with V1, V2, V3, etc.
 
-# Data preparation
-data = pd.read_csv('SortedPoseDataSet.csv')  # Reads the file & sorts data into columns
 data["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
 target = data["exercise"]  # Extracts only the target for later prediction
-target = target[0:900:5]
+
+nFrames = np.amax(data["Frame Number"]) + 1  # Length of frames pr. Sequences.
+target = target[0::nFrames]  # Splits target into the total number of sequences
+nSeq = len(target)  # Total number of sequences
 
 # Remove the columns we don't need.
 data.drop(["exercise"], inplace=True, axis=1)
 data.drop(["File Path"], inplace=True, axis=1)
 data.drop(["FolderID"], inplace=True, axis=1)
 data.drop(["Frame Number"], inplace=True, axis=1)
-data.drop(data.columns[0], inplace=True, axis=1) # Remove the mystery first column
+data.drop(data.columns[0], inplace=True, axis=1)  # Remove the mystery first column
 
 columns = list(data)
 for i in columns:
     data[[i + "X", i + "Y"]] = data[[i][0]].str.split(",", expand=True)
-    print(data[[i + "X", i + "Y"]])
+    # print(data[[i + "X", i + "Y"]])
     data.drop([i], inplace=True, axis=1)
 
 # Arrange data
 data = data.astype(np.float32)
 data = pd.DataFrame(data).to_numpy()
 target = pd.DataFrame(target).to_numpy()
-data = array(data).reshape(180, 5, 34)
+data = array(data).reshape(nSeq, nFrames, 34)
 data = data / np.amax(data)
-target = target / 3
-
+target = target / 3  # 3+1 is number of possible exercises
 # Visualize data
 df = data
 # Reshape into 2d array
 nsamples, nx, ny = df.shape
-df = df.reshape((nsamples,nx*ny))
+df = df.reshape((nsamples, nx*ny))
 print(df.shape)
+# ______________________________________________Dimensionality Reduction________________________________________
 # PCA
 pca = PCA(n_components=3)
 pca_result = pca.fit_transform(df)
