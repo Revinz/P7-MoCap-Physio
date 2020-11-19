@@ -115,13 +115,6 @@ export class PoseNetPredictor extends React.Component<props> {
         <Text>
           PoseNetPredictor {this.state.poseNetLoaded ? "Loaded" : "Not Loaded"}
         </Text>
-        <Image
-          style={{ width: 50, height: 50 }}
-          source={{
-            uri:
-              "http://10.0.2.2:8081/assets/assets/images/test_pose.jpeg?platform=android&hash=212be799424050e3f011b436d2881ebe",
-          }}
-        />
       </View>
     );
   }

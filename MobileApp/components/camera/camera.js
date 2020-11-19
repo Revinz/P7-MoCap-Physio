@@ -42,17 +42,16 @@ const CameraScene = () => {
   let [camera, setCamera] = useState(null);
   let [hasPermission, setHasPermission] = useState(null);
   let [type, setType] = useState(Camera.Constants.Type.back);
-  let captureDelayMS = 5000;
-  let pictureSaved = async (data) => {
-    /* console.log("Image is saved");
+  let captureDelayMS = 500;
+  let pictureSaved = (data) => {
+    console.log("Image is saved");
     const source = data.uri;
-    console.log("uri: ", source); */
+    //console.log("uri: ", source);
   };
   var options = {
     quality: 0.5,
     base64: true,
     skipProcessing: false,
-    onPictureSaved: pictureSaved,
   };
   var recording = false;
 
@@ -87,8 +86,19 @@ const CameraScene = () => {
     if (camera) {
       console.log("Taking picture");
 
-      await camera.takePictureAsync(options);
+      //This works correctly now,
+      //Possible non-interrupting errors that might happen:
+      // * Camera not running
+      // * Auto-focus error
+      try {
+        camera
+          .takePictureAsync(options)
+          .then((data) => console.log("Picture taken..."));
+      } catch (err) {
+        console.log(err);
+      }
 
+      console.log("test");
       //console.log("path: ", source.path); returns undefined
       if (recording) {
         setTimeout(CaptureImage, captureDelayMS); // Run function again after delay
