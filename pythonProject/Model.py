@@ -9,6 +9,7 @@ from keras.layers.core import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import minmax_scale
 
+import time
 # Data preparation
 data = pd.read_csv('SortedPoseDataSet.csv')  # Reads the file & sorts data into columns
 
@@ -200,7 +201,7 @@ x_train, x_test, y_train, y_test = train_test_split(data, target, test_size=0.2,
 # model.add(Dense(1))
 # model.compile(loss='mean_absolute_error', optimizer='adam', metrics=['accuracy'])
 #
-# history = model.fit(x_train, y_train, epochs=1000, validation_data=(x_test, y_test))
+# history = model.fit(x_train, y_train, epochs=800, validation_data=(x_test, y_test))
 #
 # results = model.predict(x_test, verbose=0)
 # plt.scatter(range(results.size), results, c='b')
@@ -215,12 +216,12 @@ x_train, x_test, y_train, y_test = train_test_split(data, target, test_size=0.2,
 # MODEL 5
 # model.compile(loss='SparseCategoricalCrossentropy', optimizer='sgd', metrics=['accuracy'])
 
-print("1: ", len(data[0:10, :]))
-print(data)
+#print("length: ", len(data[0:10, :]))
+#print(data)
 
 
 # -------------------------------------------------------------------------------
-# TESTING 5
+# MODEL 5
 model = Sequential()
 model.add(LSTM(200, activation='relu', return_sequences=True, input_shape=(5, 34)))
 model.add(LSTM(100, activation='relu', return_sequences=True))
@@ -233,24 +234,32 @@ model.add(Dense(4, activation='softmax'))
 model.compile(loss="sparse_categorical_crossentropy", optimizer='adam', metrics=['accuracy'])
 #model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
 
+start_time = time.time()
 history = model.fit(x_train, y_train, epochs=250, validation_data=(x_test, y_test))
+print("Fit time: %0.2f seconds" % (time.time() - start_time))
 #history = model.fit(x_train, y_train, epochs=250, validation_data=(x_test, y_test))
 
 results = model.predict(x_test, verbose=0)
 
 np.set_printoptions(suppress=True)
 
-# plt.scatter(range(results.size), y_test, c='g')
-# plt.scatter(range(results.size), results, c='b', marker='x')
-#
-# plt.show()
-# #
-# plt.plot(history.history['loss'])
-# plt.show()
-
 # -------------------------------------------------------------------------------
 # PREDICTION
-# print(data[0:5, :, :])
-# print(data[5:10, :, :])
-test_output = model.predict(np.expand_dims(data[0, 0:5, :], axis=0), verbose=0)
+# print("1: ", data[0:1, :, :])
+# print("2: ", data[1:2, :, :])
+# print("3: ", data[0:2, :, :])
+
+start_time = time.time()
+# Predict on first video
+test_output = model.predict(data[0:1, :, :], verbose=0)
+
+# Predict on all videos
+# test_output = model.predict(data, verbose=0)
+
+print("Prediction time: %0.3f seconds" % (time.time() - start_time))
 print("Prediction: ", test_output)
+
+# -------------------------------------------------------------------------------
+# SAVE MODEL
+
+# model.save('saved_model/my_model')
