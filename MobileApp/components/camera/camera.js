@@ -46,12 +46,13 @@ const CameraScene = () => {
   let pictureSaved = (data) => {
     console.log("Image is saved");
     const source = data.uri;
+    console.log(data.base64);
     //console.log("uri: ", source);
   };
   var options = {
     quality: 0.5,
     base64: true,
-    skipProcessing: false,
+    skipProcessing: true,
   };
   var recording = false;
 
@@ -86,10 +87,6 @@ const CameraScene = () => {
     if (camera) {
       console.log("Taking picture");
 
-      //This works correctly now,
-      //Possible non-interrupting errors that might happen:
-      // * Camera not running
-      // * Auto-focus error
       try {
         camera
           .takePictureAsync(options)
@@ -98,30 +95,10 @@ const CameraScene = () => {
         console.log(err);
       }
 
-      console.log("test");
-      //console.log("path: ", source.path); returns undefined
       if (recording) {
         setTimeout(CaptureImage, captureDelayMS); // Run function again after delay
       }
-      /* if (source) {
-        console.log("data")
-        handleSave(source);
-      } */
     }
-  };
-
-  var handleSave = async (photo) => {
-    /* const permission = await Permissions.getAsync(Permissions.CAMERA_ROLL);
-    if (permission.status !== 'granted') {
-      const newPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      if (newPermission.status === 'granted') {
-      }
-    if (permission.status === "granted") { */
-    var assert = await MediaLibrary.createAssetAsync(photo);
-    await MediaLibrary.createAlbumAsync("Test", assert);
-    /* } else {
-      console.log("No permission");
-    } */
   };
 
   return (
@@ -150,6 +127,8 @@ const CameraScene = () => {
         style={{ flex: 6 }}
         type={type}
         onCameraReady={console.log("Camera ready")}
+        useCamera2Api={true}
+        autoFocus={false}
       >
         <View style={styles.cameraview}>
           <TouchableOpacity
