@@ -42,15 +42,9 @@ const CameraScene = () => {
   let [camera, setCamera] = useState(null);
   let [hasPermission, setHasPermission] = useState(null);
   let [type, setType] = useState(Camera.Constants.Type.back);
-  let captureDelayMS = 500;
-  let pictureSaved = (data) => {
-    console.log("Image is saved");
-    const source = data.uri;
-    console.log(data.base64);
-    //console.log("uri: ", source);
-  };
+  let captureDelayMS = 175;
   var options = {
-    quality: 0.5,
+    quality: 1,
     base64: true,
     skipProcessing: true,
   };
@@ -86,7 +80,6 @@ const CameraScene = () => {
   var CaptureImage = async () => {
     if (camera) {
       console.log("Taking picture");
-
       try {
         camera
           .takePictureAsync(options)
@@ -126,9 +119,12 @@ const CameraScene = () => {
         ref={(ref) => setCamera(ref)}
         style={{ flex: 6 }}
         type={type}
+        r
         onCameraReady={console.log("Camera ready")}
         useCamera2Api={true}
         autoFocus={false}
+        pictureSize={"64"}
+        ratio={"1:1"}
       >
         <View style={styles.cameraview}>
           <TouchableOpacity
