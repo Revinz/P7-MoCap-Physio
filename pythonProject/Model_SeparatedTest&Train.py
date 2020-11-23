@@ -13,33 +13,44 @@ import time
 # --------------------------------------------------------------------------------
 # DATA PREPARATION
 
-data = pd.read_csv('SortedPoseDataSetV2.csv')  # Which dataset to read, change versions with V1, V2, V3, etc.
+x_train = pd.read_csv('train_5frames_SortedPoseDataSet.csv')
+x_test = pd.read_csv('test_5frames_SortedPoseDataSet.csv')
 
-data["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
-target = data["exercise"]  # Extracts only the target for later prediction
+x_train["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
+y_train = x_train["exercise"]
 
-nFrames = np.amax(data["Frame Number"]) + 1  # Length of frames pr. Sequences.
-target = target[0::nFrames]  # Splits target into the total number of sequences
-nSeq = len(target)  # Total number of sequences
+x_test["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
+y_test = x_test["exercise"]
+
+nFrames = np.amax(x_train["Frame Number"]) + 1  # Length of frames pr. Sequences.
+y_train = y_train[0::nFrames]  # Splits target into the total number of sequences
+nSeq = len(y_train)  # Total number of sequences
 # res = type(target) == str
 # print result
 # print("Is variable a string ? : " + str(res))
 
+
 # Remove the columns we don't need.
 # Drop all unnecessary data columns
-data.drop(["exercise"], inplace=True, axis=1)
-data.drop(["File Path"], inplace=True, axis=1)
-data.drop(["FolderID"], inplace=True, axis=1)
-data.drop(["Frame Number"], inplace=True, axis=1)
-data.drop(data.columns[0], inplace=True, axis=1)  # Remove the mystery first column
+x_train.drop(["exercise"], inplace=True, axis=1)
+x_train.drop(["File Path"], inplace=True, axis=1)
+x_train.drop(["FolderID"], inplace=True, axis=1)
+x_train.drop(["Frame Number"], inplace=True, axis=1)
+x_train.drop(x_train.columns[0], inplace=True, axis=1)  # Remove the mystery first column
+
+x_test.drop(["exercise"], inplace=True, axis=1)
+x_test.drop(["File Path"], inplace=True, axis=1)
+x_test.drop(["FolderID"], inplace=True, axis=1)
+x_test.drop(["Frame Number"], inplace=True, axis=1)
+x_test.drop(x_test.columns[0], inplace=True, axis=1)  # Remove the mystery first column
 #print("dtypes: ", data.dtypes)
 #print("sorted data:  ", data)
 
-columns = list(data)
+columns = list(x_train)
 for i in columns:
-    data[[i + "X", i + "Y"]] = data[[i][0]].str.split(",", expand=True)
+    x_train[[i + "X", i + "Y"]] = x_train[[i][0]].str.split(",", expand=True)
     # print(data[[i + "X", i + "Y"]])
-    data.drop([i], inplace=True, axis=1)
+    x_train.drop([i], inplace=True, axis=1)
 # data[["noseX", "noseY"]] = data.Nose.str.split(",", expand=True)
 #
 # data[["Right EyeX", "Right EyeY"]] = data["Right Eye"].str.split(",", expand=True)
@@ -87,7 +98,62 @@ for i in columns:
 
 #print(data["Right AnkleX"])
 # Convert data from string values to float
-data = data.astype(np.float32)
+x_train = x_train.astype(np.float32)
+
+columns = list(x_test)
+for i in columns:
+    x_test[[i + "X", i + "Y"]] = x_test[[i][0]].str.split(",", expand=True)
+    # print(data[[i + "X", i + "Y"]])
+    x_test.drop([i], inplace=True, axis=1)
+# data[["noseX", "noseY"]] = data.Nose.str.split(",", expand=True)
+#
+# data[["Right EyeX", "Right EyeY"]] = data["Right Eye"].str.split(",", expand=True)
+# data[["Left EyeX", "Left EyeY"]] = data["Left Eye"].str.split(",", expand=True)
+#
+# data[["Right EarX", "Right EarY"]] = data["Right Ear"].str.split(",", expand=True)
+# data[["Left EarX", "Left EarY"]] = data["Left Ear"].str.split(",", expand=True)
+#
+# data[["Right ShoulderX", "Right ShoulderY"]] = data["Right Shoulder"].str.split(",", expand=True)
+# data[["Left ShoulderX", "Left ShoulderY"]] = data["Left Shoulder"].str.split(",", expand=True)
+#
+# data[["Right ElbowX", "Right ElbowY"]] = data["Right Elbow"].str.split(",", expand=True)
+# data[["Left ElbowX", "Left ElbowY"]] = data["Left Elbow"].str.split(",", expand=True)
+#
+# data[["Right WristX", "Right WristY"]] = data["Right Wrist"].str.split(",", expand=True)
+# data[["Left WristX", "Left WristY"]] = data["Left Wrist"].str.split(",", expand=True)
+#
+# data[["Right HipX", "Right HipY"]] = data["Right Hip"].str.split(",", expand=True)
+# data[["Left HipX", "Left HipY"]] = data["Left Hip"].str.split(",", expand=True)
+#
+# data[["Right KneeX", "Right KneeY"]] = data["Right Knee"].str.split(",", expand=True)
+# data[["Left KneeX", "Left KneeY"]] = data["Left Knee"].str.split(",", expand=True)
+#
+# data[["Right AnkleX", "Right AnkleY"]] = data["Right Ankle"].str.split(",", expand=True)
+# data[["Left AnkleX", "Left AnkleY"]] = data["Left Ankle"].str.split(",", expand=True)
+#
+# data.drop(["Nose"], inplace=True, axis=1)
+# data.drop(["Right Eye"], inplace=True, axis=1)
+# data.drop(["Left Eye"], inplace=True, axis=1)
+# data.drop(["Right Ear"], inplace=True, axis=1)
+# data.drop(["Left Ear"], inplace=True, axis=1)
+# data.drop(["Right Shoulder"], inplace=True, axis=1)
+# data.drop(["Left Shoulder"], inplace=True, axis=1)
+# data.drop(["Right Elbow"], inplace=True, axis=1)
+# data.drop(["Left Elbow"], inplace=True, axis=1)
+# data.drop(["Right Wrist"], inplace=True, axis=1)
+# data.drop(["Left Wrist"], inplace=True, axis=1)
+# data.drop(["Right Hip"], inplace=True, axis=1)
+# data.drop(["Left Hip"], inplace=True, axis=1)
+# data.drop(["Right Knee"], inplace=True, axis=1)
+# data.drop(["Left Knee"], inplace=True, axis=1)
+# data.drop(["Right Ankle"], inplace=True, axis=1)
+# data.drop(["Left Ankle"], inplace=True, axis=1)
+#--------------------------------------------------------------------------------------------------
+
+#print(data["Right AnkleX"])
+# Convert data from string values to float
+x_test = y_test.astype(np.float32)
+
 #target = data.astype(np.float32)
 #print(data["Right AnkleX"])
 
@@ -95,8 +161,10 @@ data = data.astype(np.float32)
 #     res = isinstance(data.iloc[10, i], str)
 #     print("Is variable a string ? : " + str(res))
 # Convert dataset to numpy to allow easier reshaping
-data = pd.DataFrame(data).to_numpy()
-target = pd.DataFrame(target).to_numpy()
+x_train = pd.DataFrame(x_train).to_numpy()
+y_train = pd.DataFrame(y_train).to_numpy()
+x_test = pd.DataFrame(x_test).to_numpy()
+y_test = pd.DataFrame(y_test).to_numpy()
 #print("Converted to np: ", data)
 
 
@@ -105,7 +173,8 @@ target = pd.DataFrame(target).to_numpy()
 
 #data = data / np.amax(data)
 #target = target / 3  # 3+1 is number of possible exercises
-data = sklearn.preprocessing.minmax_scale(data)  # Normalizes data. NOT target since its categorical.
+x_train = sklearn.preprocessing.minmax_scale(x_train)  # Normalize data. NOT target since its categorical.
+x_test = sklearn.preprocessing.minmax_scale(x_test)  # Normalize data. NOT target since its categorical.
 #target = sklearn.preprocessing.minmax_scale(target)
 
 #data = sklearn.preprocessing.normalize(data, norm="l1")
@@ -115,13 +184,14 @@ data = sklearn.preprocessing.minmax_scale(data)  # Normalizes data. NOT target s
 # print("Data: \n", data)
 # print("DATA DTYPE: ", data.dtype)
 # print("TARGET DTYPE: ", target.dtype)
-data = array(data).reshape(nSeq, nFrames, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
+x_train = array(x_train).reshape(nSeq, nFrames, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
+x_test = array(y_train).reshape(nSeq, nFrames, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
 
 # ------------------------------------------------------------
 # MODEL TRAINING
 
 # Split data into test and training
-x_train, x_test, y_train, y_test = train_test_split(data, target, test_size=0.2, random_state=4)
+# x_train, x_test, y_train, y_test = train_test_split(data, target, test_size=0.2, random_state=4)
 # print("Data: \n", data)
 # print("Data shape; ", data.shape)
 # print("Target: \n", target)
