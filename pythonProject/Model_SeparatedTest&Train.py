@@ -23,12 +23,12 @@ x_test["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlif
 y_test = x_test["exercise"]
 
 nFrames = np.amax(x_train["Frame Number"]) + 1  # Length of frames pr. Sequences.
-y_train = y_train[0::nFrames]  # Splits target into the total number of sequences
-nSeq = len(y_train)  # Total number of sequences
-# res = type(target) == str
-# print result
-# print("Is variable a string ? : " + str(res))
 
+y_train = y_train[0::nFrames]  # Splits target into the total number of sequences
+y_test = y_test[0::nFrames]  # Splits target into the total number of sequences
+
+train_nSeq = len(y_train)  # Total number of sequences
+test_nSeq = len(y_test)  # Total number of sequences
 
 # Remove the columns we don't need.
 # Drop all unnecessary data columns
@@ -43,60 +43,15 @@ x_test.drop(["File Path"], inplace=True, axis=1)
 x_test.drop(["FolderID"], inplace=True, axis=1)
 x_test.drop(["Frame Number"], inplace=True, axis=1)
 x_test.drop(x_test.columns[0], inplace=True, axis=1)  # Remove the mystery first column
-#print("dtypes: ", data.dtypes)
-#print("sorted data:  ", data)
+
 
 columns = list(x_train)
 for i in columns:
     x_train[[i + "X", i + "Y"]] = x_train[[i][0]].str.split(",", expand=True)
     # print(data[[i + "X", i + "Y"]])
     x_train.drop([i], inplace=True, axis=1)
-# data[["noseX", "noseY"]] = data.Nose.str.split(",", expand=True)
-#
-# data[["Right EyeX", "Right EyeY"]] = data["Right Eye"].str.split(",", expand=True)
-# data[["Left EyeX", "Left EyeY"]] = data["Left Eye"].str.split(",", expand=True)
-#
-# data[["Right EarX", "Right EarY"]] = data["Right Ear"].str.split(",", expand=True)
-# data[["Left EarX", "Left EarY"]] = data["Left Ear"].str.split(",", expand=True)
-#
-# data[["Right ShoulderX", "Right ShoulderY"]] = data["Right Shoulder"].str.split(",", expand=True)
-# data[["Left ShoulderX", "Left ShoulderY"]] = data["Left Shoulder"].str.split(",", expand=True)
-#
-# data[["Right ElbowX", "Right ElbowY"]] = data["Right Elbow"].str.split(",", expand=True)
-# data[["Left ElbowX", "Left ElbowY"]] = data["Left Elbow"].str.split(",", expand=True)
-#
-# data[["Right WristX", "Right WristY"]] = data["Right Wrist"].str.split(",", expand=True)
-# data[["Left WristX", "Left WristY"]] = data["Left Wrist"].str.split(",", expand=True)
-#
-# data[["Right HipX", "Right HipY"]] = data["Right Hip"].str.split(",", expand=True)
-# data[["Left HipX", "Left HipY"]] = data["Left Hip"].str.split(",", expand=True)
-#
-# data[["Right KneeX", "Right KneeY"]] = data["Right Knee"].str.split(",", expand=True)
-# data[["Left KneeX", "Left KneeY"]] = data["Left Knee"].str.split(",", expand=True)
-#
-# data[["Right AnkleX", "Right AnkleY"]] = data["Right Ankle"].str.split(",", expand=True)
-# data[["Left AnkleX", "Left AnkleY"]] = data["Left Ankle"].str.split(",", expand=True)
-#
-# data.drop(["Nose"], inplace=True, axis=1)
-# data.drop(["Right Eye"], inplace=True, axis=1)
-# data.drop(["Left Eye"], inplace=True, axis=1)
-# data.drop(["Right Ear"], inplace=True, axis=1)
-# data.drop(["Left Ear"], inplace=True, axis=1)
-# data.drop(["Right Shoulder"], inplace=True, axis=1)
-# data.drop(["Left Shoulder"], inplace=True, axis=1)
-# data.drop(["Right Elbow"], inplace=True, axis=1)
-# data.drop(["Left Elbow"], inplace=True, axis=1)
-# data.drop(["Right Wrist"], inplace=True, axis=1)
-# data.drop(["Left Wrist"], inplace=True, axis=1)
-# data.drop(["Right Hip"], inplace=True, axis=1)
-# data.drop(["Left Hip"], inplace=True, axis=1)
-# data.drop(["Right Knee"], inplace=True, axis=1)
-# data.drop(["Left Knee"], inplace=True, axis=1)
-# data.drop(["Right Ankle"], inplace=True, axis=1)
-# data.drop(["Left Ankle"], inplace=True, axis=1)
-#--------------------------------------------------------------------------------------------------
 
-#print(data["Right AnkleX"])
+
 # Convert data from string values to float
 x_train = x_train.astype(np.float32)
 
@@ -105,68 +60,17 @@ for i in columns:
     x_test[[i + "X", i + "Y"]] = x_test[[i][0]].str.split(",", expand=True)
     # print(data[[i + "X", i + "Y"]])
     x_test.drop([i], inplace=True, axis=1)
-# data[["noseX", "noseY"]] = data.Nose.str.split(",", expand=True)
-#
-# data[["Right EyeX", "Right EyeY"]] = data["Right Eye"].str.split(",", expand=True)
-# data[["Left EyeX", "Left EyeY"]] = data["Left Eye"].str.split(",", expand=True)
-#
-# data[["Right EarX", "Right EarY"]] = data["Right Ear"].str.split(",", expand=True)
-# data[["Left EarX", "Left EarY"]] = data["Left Ear"].str.split(",", expand=True)
-#
-# data[["Right ShoulderX", "Right ShoulderY"]] = data["Right Shoulder"].str.split(",", expand=True)
-# data[["Left ShoulderX", "Left ShoulderY"]] = data["Left Shoulder"].str.split(",", expand=True)
-#
-# data[["Right ElbowX", "Right ElbowY"]] = data["Right Elbow"].str.split(",", expand=True)
-# data[["Left ElbowX", "Left ElbowY"]] = data["Left Elbow"].str.split(",", expand=True)
-#
-# data[["Right WristX", "Right WristY"]] = data["Right Wrist"].str.split(",", expand=True)
-# data[["Left WristX", "Left WristY"]] = data["Left Wrist"].str.split(",", expand=True)
-#
-# data[["Right HipX", "Right HipY"]] = data["Right Hip"].str.split(",", expand=True)
-# data[["Left HipX", "Left HipY"]] = data["Left Hip"].str.split(",", expand=True)
-#
-# data[["Right KneeX", "Right KneeY"]] = data["Right Knee"].str.split(",", expand=True)
-# data[["Left KneeX", "Left KneeY"]] = data["Left Knee"].str.split(",", expand=True)
-#
-# data[["Right AnkleX", "Right AnkleY"]] = data["Right Ankle"].str.split(",", expand=True)
-# data[["Left AnkleX", "Left AnkleY"]] = data["Left Ankle"].str.split(",", expand=True)
-#
-# data.drop(["Nose"], inplace=True, axis=1)
-# data.drop(["Right Eye"], inplace=True, axis=1)
-# data.drop(["Left Eye"], inplace=True, axis=1)
-# data.drop(["Right Ear"], inplace=True, axis=1)
-# data.drop(["Left Ear"], inplace=True, axis=1)
-# data.drop(["Right Shoulder"], inplace=True, axis=1)
-# data.drop(["Left Shoulder"], inplace=True, axis=1)
-# data.drop(["Right Elbow"], inplace=True, axis=1)
-# data.drop(["Left Elbow"], inplace=True, axis=1)
-# data.drop(["Right Wrist"], inplace=True, axis=1)
-# data.drop(["Left Wrist"], inplace=True, axis=1)
-# data.drop(["Right Hip"], inplace=True, axis=1)
-# data.drop(["Left Hip"], inplace=True, axis=1)
-# data.drop(["Right Knee"], inplace=True, axis=1)
-# data.drop(["Left Knee"], inplace=True, axis=1)
-# data.drop(["Right Ankle"], inplace=True, axis=1)
-# data.drop(["Left Ankle"], inplace=True, axis=1)
-#--------------------------------------------------------------------------------------------------
 
-#print(data["Right AnkleX"])
+
 # Convert data from string values to float
-x_test = y_test.astype(np.float32)
+x_test = x_test.astype(np.float32)
 
-#target = data.astype(np.float32)
-#print(data["Right AnkleX"])
-
-# for i in range(34):
-#     res = isinstance(data.iloc[10, i], str)
-#     print("Is variable a string ? : " + str(res))
 # Convert dataset to numpy to allow easier reshaping
 x_train = pd.DataFrame(x_train).to_numpy()
 y_train = pd.DataFrame(y_train).to_numpy()
 x_test = pd.DataFrame(x_test).to_numpy()
 y_test = pd.DataFrame(y_test).to_numpy()
 #print("Converted to np: ", data)
-
 
 # ------------------------------------------------------------
 # DATA NORMALIZATION
@@ -184,8 +88,11 @@ x_test = sklearn.preprocessing.minmax_scale(x_test)  # Normalize data. NOT targe
 # print("Data: \n", data)
 # print("DATA DTYPE: ", data.dtype)
 # print("TARGET DTYPE: ", target.dtype)
-x_train = array(x_train).reshape(nSeq, nFrames, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
-x_test = array(y_train).reshape(nSeq, nFrames, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
+print("x_train: ", train_nSeq, x_train.shape)
+print("x_test: ", test_nSeq, x_test.shape)
+
+x_train = array(x_train).reshape(train_nSeq, nFrames, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
+x_test = array(x_test).reshape(test_nSeq, nFrames, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
 
 # ------------------------------------------------------------
 # MODEL TRAINING
@@ -311,6 +218,8 @@ print("Fit time: %0.2f seconds" % (time.time() - start_time))
 
 results = model.predict(x_test, verbose=0)
 np.set_printoptions(suppress=True)
+plt.plot(history.history['loss'])
+plt.show()
 # -------------------------------------------------------------------------------
 # PREDICTION
 # print("1: ", data[0:1, :, :])
@@ -322,7 +231,7 @@ start_time = time.time()
 # test_output = model.predict(data[0:1, :, :], verbose=0)
 
 # Predict on all sequences
-test_output = model.predict(data, verbose=0)
+test_output = model.predict(x_test, verbose=0)
 print("Prediction time: %0.3f seconds" % (time.time() - start_time))
 print("Prediction: ", test_output)
 # -------------------------------------------Saving & Exporting Model------------------------------------------------
