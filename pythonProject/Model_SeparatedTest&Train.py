@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from numpy import array
 from keras.models import Sequential
-from keras.layers import Flatten, LSTM
+from keras.layers import Flatten, LSTM, Dropout
 from keras.layers.core import Dense
+from keras.layers import Bidirectional
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import minmax_scale
 import time
@@ -79,6 +80,9 @@ y_test = pd.DataFrame(y_test).to_numpy()
 #target = target / 3  # 3+1 is number of possible exercises
 x_train = sklearn.preprocessing.minmax_scale(x_train)  # Normalize data. NOT target since its categorical.
 x_test = sklearn.preprocessing.minmax_scale(x_test)  # Normalize data. NOT target since its categorical.
+
+#y_train = sklearn.preprocessing.minmax_scale(y_train)  # Normalize data. NOT target since its categorical.
+#y_test = sklearn.preprocessing.minmax_scale(y_test)  # Normalize data. NOT target since its categorical.
 #target = sklearn.preprocessing.minmax_scale(target)
 
 #data = sklearn.preprocessing.normalize(data, norm="l1")
@@ -191,25 +195,41 @@ x_test = array(x_test).reshape(test_nSeq, nFrames, 34)  # Reshape 2D - 3D to get
 
 # -------------------------------------------------------------------------------
 # MODEL 5
+# model = Sequential()
+# model.add(LSTM(100, activation='relu', return_sequences=True, input_shape=(nFrames, 34)))
+# model.add(LSTM(50, activation='relu', return_sequences=True))
+# model.add(LSTM(25, activation='relu', return_sequences=True))
+# model.add(LSTM(20, activation='relu'))
+# model.add(Dense(40, activation='relu'))
+# model.add(Dense(20, activation='relu'))
+# model.add(Dense(4, activation='softmax'))
 # model.compile(loss='SparseCategoricalCrossentropy', optimizer='sgd', metrics=['accuracy'])
-
 #print("length: ", len(data[0:10, :]))
 #print(data)
 
 
 # -------------------------------------------------------------------------------
-# MODEL 5
+# MODEL 6
 model = Sequential()
-model.add(LSTM(200, activation='relu', return_sequences=True, input_shape=(nFrames, 34)))
-model.add(LSTM(100, activation='relu', return_sequences=True))
-model.add(LSTM(50, activation='relu', return_sequences=True))
-model.add(LSTM(25, activation='relu'))
-model.add(Dense(20, activation='relu'))
-model.add(Dense(10, activation='relu'))
+#model.add(Dropout(0.25))
+model.add(Bidirectional(LSTM(400, activation='relu', return_sequences=True, input_shape=(nFrames, 34))))
+#model.add(Dropout(0.5))
+model.add(Bidirectional(LSTM(200, activation='relu', return_sequences=True)))
+#model.add(Bidirectional(LSTM(50, activation='relu', return_sequences=True)))
+#model.add(Dropout(0.5))
+model.add(Bidirectional(LSTM(100, activation='relu', return_sequences=True)))
+#model.add(Dropout(0.5))
+model.add(Bidirectional(LSTM(50, activation='relu')))
+#model.add(Dropout(0.3))
+model.add(Dense(80, activation='relu'))
+#model.add(Dropout(0.5))
+model.add(Dense(40, activation='relu'))
+#model.add(Dropout(0.5))
 model.add(Dense(4, activation='softmax'))
-# model.add(Dense(1)) #- replace with soft for better anomaly detection
+#model.add(Dense(1)) #- replace with soft for better anomaly detection
 
 # Can use mse or mean_absolute_error instead of crossentrophy
+#model.compile(loss="mean_absolute_error", optimizer='adam', metrics=['accuracy'])
 model.compile(loss="sparse_categorical_crossentropy", optimizer='adam', metrics=['accuracy'])
 
 start_time = time.time()
@@ -218,6 +238,25 @@ print("Fit time: %0.2f seconds" % (time.time() - start_time))
 
 results = model.predict(x_test, verbose=0)
 np.set_printoptions(suppress=True)
+
+resultIndex = []
+for e in results:
+    i = np.argmax(e)
+    resultIndex.append(i)
+
+plt.scatter(range(len(resultIndex)), y_test, c='g')
+plt.scatter(range(len(resultIndex)), resultIndex, c='b', marker='x')
+plt.show()
+
+# plt.scatter(range(results.size), results, c='b')
+# plt.scatter(range(results.size), y_test, c='g')
+
+
+#
+plt.plot(history.history['loss'])
+plt.show()
+
+
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
 plt.title('model accuracy')
