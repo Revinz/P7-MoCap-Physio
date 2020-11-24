@@ -10,12 +10,75 @@ from keras.layers import Bidirectional
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import minmax_scale
 import time
+import seaborn as sns
+
+
+import numpy as np
+import pandas as pd
+from numpy import array
+import time
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+from numpy.random import seed
+from tensorflow import optimizers
+
+seed(1)
+
+def visualizeData():
+    # Arrange data
+    data = x_train.astype(np.float32)
+    data = pd.DataFrame(data).to_numpy()
+    target = pd.DataFrame(y_train).to_numpy()
+    data = array(data).reshape(train_nSeq, nFrames, 34)
+    data = data / np.amax(data)
+    target = target / 3  # 3+1 is number of possible exercises
+    # Visualize data
+    df = data
+    # Reshape into 2d array
+    nsamples, nx, ny = df.shape
+    df = df.reshape((nsamples, nx*ny))
+    print(df.shape)
+    # ______________________________________________Dimensionality Reduction________________________________________
+    # PCA
+    pca = PCA(n_components=3)
+    pca_result = pca.fit_transform(df)
+    PCA1 = pca_result[:, 0]
+    PCA2 = pca_result[:, 1]
+    PCA3 = pca_result[:, 2]
+    print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
+    # PCA 3D
+    ax = plt.figure(figsize=(16, 10)).gca(projection='3d')
+    ax.scatter(xs=PCA1, ys=PCA2, zs=PCA3, c=target[:, 0], cmap='tab10')
+    ax.set_xlabel('pca-one')
+    ax.set_ylabel('pca-two')
+    ax.set_zlabel('pca-three')
+    plt.show()
+    # TSNE 2D
+    time_start = time.time()
+    tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300, random_state=1) # Remove r_state for diverse results
+    tsne_results = tsne.fit_transform(df)
+    print('t-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start))
+    TSNE1 = tsne_results[:, 0]
+    TSNE2 = tsne_results[:, 1]
+    # -----------------Data Plotting
+    plt.figure(figsize=(16, 7))
+    ax1 = plt.subplot(1, 2, 1)
+    sns.scatterplot(
+        x=PCA1, y=PCA2, hue=target[:, 0], palette=sns.color_palette("hls", 4), data=df, legend="full", alpha=1, ax=ax1)
+    ax2 = plt.subplot(1, 2, 2)
+    sns.scatterplot(
+        x=TSNE1, y=TSNE2, hue=target[:,0], palette=sns.color_palette("hls", 4), data=df, legend="full", alpha=1, ax=ax2)
+    plt.show()
 
 # --------------------------------------------------------------------------------
 # DATA PREPARATION
 
-x_train = pd.read_csv('train_5frames_SortedPoseDataSet.csv')
-x_test = pd.read_csv('test_5frames_SortedPoseDataSet.csv')
+x_train = pd.read_csv('training_5ex_10fram_2skip_Sorted.csv')
+x_test = pd.read_csv('test_5ex_10fram_2skip_Sorted.csv')
 
 x_train["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
 y_train = x_train["exercise"]
@@ -52,10 +115,6 @@ for i in columns:
     # print(data[[i + "X", i + "Y"]])
     x_train.drop([i], inplace=True, axis=1)
 
-
-# Convert data from string values to float
-x_train = x_train.astype(np.float32)
-
 columns = list(x_test)
 for i in columns:
     x_test[[i + "X", i + "Y"]] = x_test[[i][0]].str.split(",", expand=True)
@@ -63,8 +122,71 @@ for i in columns:
     x_test.drop([i], inplace=True, axis=1)
 
 
+
+
 # Convert data from string values to float
+x_train = x_train.astype(np.float32)
 x_test = x_test.astype(np.float32)
+
+
+
+
+# ---------------------------------------------------------------------------
+#print("x-test", x_test, x_test.shape)
+
+#x_test.iloc[1, :] = x_test.iloc[2, :]
+#print(x_test.iloc[0, :])
+#print(x_test.iloc[1, :])
+#print(x_test.iloc[2, :])
+
+train_rowsToDrop = []
+test_rowsToDrop = []
+
+for i in range(train_nSeq * nFrames - 1):
+    #print(i % nFrames)
+    if i % nFrames == nFrames - 1:
+        train_rowsToDrop.append(i)
+
+    else:
+        x_train.iloc[i, :] = x_train.iloc[i+1, :] - x_train.iloc[i, :]
+
+for i in range(test_nSeq * nFrames - 1):
+    if i % nFrames == nFrames - 1:
+        test_rowsToDrop.append(i)
+    else:
+        x_test.iloc[i, :] = x_test.iloc[i+1, :] - x_test.iloc[i, :]
+
+
+for i in range(train_nSeq * nFrames):
+    if i % nFrames == 0:
+        continue
+    else:
+        x_train.iloc[i, :] = abs(x_train.iloc[i, :]) + abs(x_train.iloc[i-1, :])
+
+for i in range(test_nSeq * nFrames):
+    if i % nFrames == 0:
+        continue
+    else:
+        x_test.iloc[i, :] = abs(x_test.iloc[i, :]) + abs(x_test.iloc[i-1, :])
+
+
+#visualizeData()
+
+print("Rows to drop: ", train_rowsToDrop)
+print("Rows to drop: ", len(train_rowsToDrop))
+print("Not dropped: ", x_train)
+x_train.drop(train_rowsToDrop, 0, inplace=True)
+print("Head: ", x_train.head(20))
+
+print("Dropped: ", x_train)
+
+x_test.drop(test_rowsToDrop, 0, inplace=True)
+print("Head: ", x_test.head(20))
+x_train.drop(index=len(x_train)-1, inplace=True)
+x_test.drop(index=len(x_test)-1, inplace=True)
+print("træn:", x_test, len(x_test))
+# ---------------------------------------------------------------------------
+
 
 # Convert dataset to numpy to allow easier reshaping
 x_train = pd.DataFrame(x_train).to_numpy()
@@ -95,8 +217,8 @@ x_test = sklearn.preprocessing.minmax_scale(x_test)  # Normalize data. NOT targe
 print("x_train: ", train_nSeq, x_train.shape)
 print("x_test: ", test_nSeq, x_test.shape)
 
-x_train = array(x_train).reshape(train_nSeq, nFrames, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
-x_test = array(x_test).reshape(test_nSeq, nFrames, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
+x_train = array(x_train).reshape(train_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
+x_test = array(x_test).reshape(test_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
 
 # ------------------------------------------------------------
 # MODEL TRAINING
@@ -210,30 +332,76 @@ x_test = array(x_test).reshape(test_nSeq, nFrames, 34)  # Reshape 2D - 3D to get
 
 # -------------------------------------------------------------------------------
 # MODEL 6
-model = Sequential()
-#model.add(Dropout(0.25))
-model.add(Bidirectional(LSTM(400, activation='relu', return_sequences=True, input_shape=(nFrames, 34))))
-#model.add(Dropout(0.5))
-model.add(Bidirectional(LSTM(200, activation='relu', return_sequences=True)))
-#model.add(Bidirectional(LSTM(50, activation='relu', return_sequences=True)))
-#model.add(Dropout(0.5))
-model.add(Bidirectional(LSTM(100, activation='relu', return_sequences=True)))
-#model.add(Dropout(0.5))
-model.add(Bidirectional(LSTM(50, activation='relu')))
-#model.add(Dropout(0.3))
-model.add(Dense(80, activation='relu'))
-#model.add(Dropout(0.5))
-model.add(Dense(40, activation='relu'))
-#model.add(Dropout(0.5))
-model.add(Dense(4, activation='softmax'))
-#model.add(Dense(1)) #- replace with soft for better anomaly detection
+# model = Sequential()
+# #model.add(Dropout(0.25))
+# model.add(Bidirectional(LSTM(400, activation='relu', return_sequences=True, input_shape=(nFrames, 34))))
+# #model.add(Dropout(0.5))
+# model.add(Bidirectional(LSTM(200, activation='relu', return_sequences=True)))
+# #model.add(Bidirectional(LSTM(50, activation='relu', return_sequences=True)))
+# #model.add(Dropout(0.5))
+# model.add(Bidirectional(LSTM(100, activation='relu', return_sequences=True)))
+# #model.add(Dropout(0.5))
+# model.add(Bidirectional(LSTM(50, activation='relu')))
+# #model.add(Dropout(0.3))
+# model.add(Dense(80, activation='relu'))
+# #model.add(Dropout(0.5))
+# model.add(Dense(40, activation='relu'))
+# #model.add(Dropout(0.5))
+# model.add(Dense(4, activation='softmax'))
+# #model.add(Dense(1)) #- replace with soft for better anomaly detection
+#
+# # Can use mse or mean_absolute_error instead of crossentrophy
+# #model.compile(loss="mean_absolute_error", optimizer='adam', metrics=['accuracy'])
+# model.compile(loss="sparse_categorical_crossentropy", optimizer='adam', metrics=['accuracy'])
 
-# Can use mse or mean_absolute_error instead of crossentrophy
-#model.compile(loss="mean_absolute_error", optimizer='adam', metrics=['accuracy'])
-model.compile(loss="sparse_categorical_crossentropy", optimizer='adam', metrics=['accuracy'])
+# -------------------------------------------------------------------------------
+# MODEL 7
+# model = Sequential()
+# #model.add(Dropout(0.1))
+# model.add(LSTM(512, activation='relu', return_sequences=True, input_shape=(nFrames, 34)))
+# model.add(LSTM(256, activation='relu', return_sequences=True))
+# model.add(LSTM(128, activation='relu', return_sequences=True))
+# model.add(LSTM(64, activation='relu', return_sequences=True))
+# model.add(LSTM(32, activation='relu', return_sequences=True))
+# model.add(LSTM(16, activation='relu', return_sequences=True))
+# model.add(LSTM(8, activation='relu'))
+#
+# #model.add(Dropout(0.25))
+# model.add(Dense(8, activation='relu'))
+# #model.add(Dropout(0.5))
+# model.add(Dense(4, activation='relu'))
+# #model.add(Dropout(0.5))
+# model.add(Dense(4, activation='softmax'))
+# # model.add(Dense(1)) #- replace with soft for better anomaly detection
+#
+# # Can use mse or mean_absolute_error instead of crossentrophy
+# model.compile(loss="sparse_categorical_crossentropy", optimizer='adam', metrics=['accuracy'])
+
+print(nFrames)
+# -------------------------------------------------------------------------------
+# MODEL 7
+model = Sequential()
+#model.add(Dropout(0.1))
+model.add(LSTM(100, activation='tanh', return_sequences=True, input_shape=(nFrames-1, 34), dropout=0.5))
+#model.add(LSTM(256, activation='relu', return_sequences=True))
+model.add(LSTM(75, activation='relu', return_sequences=True, dropout=0.5))
+model.add(LSTM(50, activation='relu', return_sequences=True, dropout=0.5))
+model.add(LSTM(20, activation='relu', dropout=0.5))
+
+#model.add(Dropout(0.25))
+model.add(Dense(40, activation='relu'))
+#model.add(Dropout(0.25))
+model.add(Dense(20, activation='relu'))
+#model.add(Dropout(0.25))
+model.add(Dense(4, activation='softmax'))
+# model.add(Dense(1)) #- replace with soft for better anomaly detection
+
+opt = optimizers.Adam(learning_rate=0.0005)
+# Can use mse or mean_absolute_error instead of crossentropy
+model.compile(loss='sparse_categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
 
 start_time = time.time()
-history = model.fit(x_train, y_train, epochs=250, validation_data=(x_test, y_test))
+history = model.fit(x_train, y_train, epochs=1500, validation_data=(x_test, y_test))
 print("Fit time: %0.2f seconds" % (time.time() - start_time))
 
 results = model.predict(x_test, verbose=0)
@@ -250,11 +418,6 @@ plt.show()
 
 # plt.scatter(range(results.size), results, c='b')
 # plt.scatter(range(results.size), y_test, c='g')
-
-
-#
-plt.plot(history.history['loss'])
-plt.show()
 
 
 plt.plot(history.history['accuracy'])
@@ -288,3 +451,4 @@ print("Prediction time: %0.3f seconds" % (time.time() - start_time))
 print("Prediction: ", test_output)
 # -------------------------------------------Saving & Exporting Model------------------------------------------------
 # model.save('saved_model/my_model')
+
