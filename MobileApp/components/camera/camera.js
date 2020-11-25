@@ -16,33 +16,22 @@ import { Permissions } from "expo";
 import { Camera } from "expo-camera";
 import React, { useState, useEffect, useRef, Component } from "react";
 import ExerciseCounter from "../ExerciseCounter.js";
-
-/**
- *
- *  TODO: Convert to ReactComponent
- *
- */
-/*
-export default class CameraScene extends React.Component {
-  constructor(props) {
-    super(props);
-    console.log("Camera");
-  }
-
-  //Returns how it looks
-  render() {
-    return (
-      <Text>CAMERA SCENE</Text>
-    );
-  }
-} */
+import PoseNetPredictor from "../Predictors/PoseNetPredictor.js";
 
 const CameraScene = () => {
   let [toggleButton, setButton] = useState(null);
   let [camera, setCamera] = useState(null);
   let [hasPermission, setHasPermission] = useState(null);
   let [type, setType] = useState(Camera.Constants.Type.back);
-  let captureDelayMS = 175;
+  const netPredictor = new PoseNetPredictor();
+
+  /* variables used for processing */
+  const AMOUNT_FRAMES_FOR_PROCESSING = 5;
+  let [pictureURIs, updatePictureList] = useState([]);
+  // Results from the posenet processing
+  let [processedResults, updateProcessedResults] = useState([]);
+
+  let captureDelayMS = 50;
   var options = {
     quality: 1,
     base64: true,
@@ -77,13 +66,36 @@ const CameraScene = () => {
     }
   };
 
+  let GLOBAL_START_ID = 0;
   var CaptureImage = async () => {
+    const idx = GLOBAL_START_ID;
+    GLOBAL_START_ID = GLOBAL_START_ID + 1;
+    if (!netPredictor.isReady) {
+      await netPredictor.Setup();
+    }
     if (camera) {
-      console.log("Taking picture");
       try {
-        camera
-          .takePictureAsync(options)
-          .then((data) => console.log("Picture taken..."));
+        camera.takePictureAsync(options).then((data) => {
+          console.log("Picture taken...");
+          console.log("Height: " + data.height);
+          console.log("width: " + data.width);
+
+          //add new image uri to the list with all the uris
+          const tmp_pictureList = pictureURIs;
+          tmp_pictureList.push(data.uri);
+          updatePictureList(tmp_pictureList);
+          console.log(pictureURIs.length);
+          console.log(idx);
+
+          //Process the last img
+          console.log("Before predict");
+          netPredictor.predictImage(data.uri).then(async (results) => {
+            console.log("After predict");
+            const tmp_all_results = processedResults;
+            tmp_all_results.push(results);
+            updateProcessedResults(tmp_all_results);
+          });
+        });
       } catch (err) {
         console.log(err);
       }
@@ -92,6 +104,19 @@ const CameraScene = () => {
         setTimeout(CaptureImage, captureDelayMS); // Run function again after delay
       }
     }
+  };
+
+  var PoseNetProcessImg = async (img_uri) => {
+    //Posenet process and then save it
+    frameResult = await netPredictor.predictImage(data.uri);
+    console.log(frameResult);
+    const tmp_all_results = processedResults;
+    tmp_all_results.push(frameResult);
+    updateProcessedResults(tmp_all_results);
+  };
+
+  var PredictExercise = () => {
+    //run it on our model
   };
 
   return (
@@ -115,16 +140,16 @@ const CameraScene = () => {
           <Text style={styles.standardText}>Burger menu</Text>
         </View>
       </View>
+
       <Camera
         ref={(ref) => setCamera(ref)}
-        style={{ flex: 6 }}
+        style={{ width: 128, height: 128 }}
         type={type}
         r
-        onCameraReady={console.log("Camera ready")}
+        onCameraReady={console.log("Camera is ready.")}
         useCamera2Api={true}
         autoFocus={false}
-        pictureSize={"64"}
-        ratio={"1:1"}
+        pictureSize={"320x240"}
       >
         <View style={styles.cameraview}>
           <TouchableOpacity

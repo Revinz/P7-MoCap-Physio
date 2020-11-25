@@ -4,48 +4,28 @@ import React from "react";
 import { Text, View, Image } from "react-native";
 import * as pn from "@tensorflow-models/posenet";
 import * as jpeg from "jpeg-js";
-
-import test_image from "../assets/images/test_pose.jpeg";
 import { tensor3d } from "@tensorflow/tfjs";
 
-export class PoseNetPredictor extends React.Component<props> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isTfReady: false,
-    };
-    this.state.poseNet = undefined;
-    this.state.poseNetLoaded = false;
+export default class PoseNetPredictor {
+  constructor() {
     console.log("PoseNetPredictor");
 
-    this.state.poseNetSettings = {
+    this.poseNetSettings = {
       architecture: "MobileNetV1",
       outputStride: 16,
-      inputResolution: { width: 256, height: 256 }, //Must match the
+      inputResolution: { width: 256, height: 256 },
       multiplier: 0.75,
     };
+    this.poseNet = null;
+    this.isReady = false;
   }
 
-  async componentDidMount() {
-    // Wait for tf to be ready.
+  async Setup() {
     await tf.ready();
-    // Signal to the app that tensorflow.js can now be used.
-    this.setState({
-      isTfReady: true,
-    });
 
-    this.LoadPoseNet();
-  }
+    this.poseNet = await pn.load(this.poseNetSettings);
 
-  async LoadPoseNet() {
-    const net = await pn.load();
-
-    this.setState({
-      poseNetLoaded: true,
-      poseNet: net,
-    });
-
-    this.predictImage(null);
+    this.isReady = true;
   }
 
   async LoadImageAsTensor3D(imgPath): Tensor3D {
@@ -90,32 +70,24 @@ export class PoseNetPredictor extends React.Component<props> {
   }
 
   async predictImage(imagePath) {
-    if (!this.state.poseNetLoaded) {
-      console.log("PoseNet Model not loaded");
-      return undefined;
+    if (!this.isReady) {
+      throw Error(
+        "PoseNetPredictor is not setup. Please run the Setup method before using."
+      );
     }
     //Load Image
-    let image = await this.LoadImageAsTensor3D("../images/test_pose.jpeg");
+    let image = await this.LoadImageAsTensor3D(imagePath);
 
     //PreProcess Image
     //image = this.resizeImage(image);
     //image = this.normalizeImage(image);
 
     //Predict on Image
-    const pose = await this.state.poseNet.estimateSinglePose(image, {
+    const pose = await this.poseNet.estimateSinglePose(image, {
       flipHorizontal: false,
     });
 
-    console.log(pose);
-  }
-
-  render() {
-    return (
-      <View>
-        <Text>
-          PoseNetPredictor {this.state.poseNetLoaded ? "Loaded" : "Not Loaded"}
-        </Text>
-      </View>
-    );
+    //console.log(pose);
+    return pose;
   }
 }

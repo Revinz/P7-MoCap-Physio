@@ -175,3 +175,4 @@ package-lock.json
 /Python/venv/
 
 /node_modules
+*.zip
