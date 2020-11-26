@@ -9,11 +9,15 @@ import { tensor3d } from "@tensorflow/tfjs";
 export default class ExercisePredictor {
   constructor() {
     console.log("ExercisePredictor");
-
+    this.model = undefined;
     this.isReady = false;
   }
 
   async Setup() {
+    const model = await tf.loadGraphModel(
+      "./../../Models/model60_1/model.json"
+    );
+    console.log(model);
     this.isReady = true;
   }
 
