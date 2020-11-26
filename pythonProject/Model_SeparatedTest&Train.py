@@ -33,7 +33,7 @@ def visualizeData():
     data = x_train.astype(np.float32)
     data = pd.DataFrame(data).to_numpy()
     target = pd.DataFrame(y_train).to_numpy()
-    data = array(data).reshape(train_nSeq, nFrames, 34)
+    data = array(data).reshape(train_nSeq, nFrames, dataP)
     data = data / np.amax(data)
     target = target / 3  # 3+1 is number of possible exercises
     # Visualize data
@@ -76,9 +76,8 @@ def visualizeData():
 
 # --------------------------------------------------------------------------------
 # DATA PREPARATION
-
-x_train = pd.read_csv('training_5ex_10fram_2skip_Sorted.csv')
-x_test = pd.read_csv('test_5ex_10fram_2skip_Sorted.csv')
+x_train = pd.read_csv('V6training20ex_5frames_0skips_sorted.csv')
+x_test = pd.read_csv('V4test_5ex_10fram_2skip_Sorted.csv')
 
 x_train["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
 y_train = x_train["exercise"]
@@ -87,6 +86,7 @@ x_test["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlif
 y_test = x_test["exercise"]
 
 nFrames = np.amax(x_train["Frame Number"]) + 1  # Length of frames pr. Sequences.
+dataP = 26  # Needs to be manually changed!
 
 y_train = y_train[0::nFrames]  # Splits target into the total number of sequences
 y_test = y_test[0::nFrames]  # Splits target into the total number of sequences
@@ -102,99 +102,85 @@ x_train.drop(["FolderID"], inplace=True, axis=1)
 x_train.drop(["Frame Number"], inplace=True, axis=1)
 x_train.drop(x_train.columns[0], inplace=True, axis=1)  # Remove the mystery first column
 
+# Unnecessary Joints
+x_train.drop(["Right Eye"], inplace=True, axis=1)
+x_train.drop(["Left Eye"], inplace=True, axis=1)
+x_train.drop(["Right Ear"], inplace=True, axis=1)
+x_train.drop(["Left Ear"], inplace=True, axis=1)
+
+# Test set below
 x_test.drop(["exercise"], inplace=True, axis=1)
 x_test.drop(["File Path"], inplace=True, axis=1)
 x_test.drop(["FolderID"], inplace=True, axis=1)
 x_test.drop(["Frame Number"], inplace=True, axis=1)
 x_test.drop(x_test.columns[0], inplace=True, axis=1)  # Remove the mystery first column
 
+# Unnecessary Joints
+x_test.drop(["Right Eye"], inplace=True, axis=1)
+x_test.drop(["Left Eye"], inplace=True, axis=1)
+x_test.drop(["Right Ear"], inplace=True, axis=1)
+x_test.drop(["Left Ear"], inplace=True, axis=1)
 
 columns = list(x_train)
 for i in columns:
     x_train[[i + "X", i + "Y"]] = x_train[[i][0]].str.split(",", expand=True)
-    # print(data[[i + "X", i + "Y"]])
     x_train.drop([i], inplace=True, axis=1)
 
 columns = list(x_test)
 for i in columns:
     x_test[[i + "X", i + "Y"]] = x_test[[i][0]].str.split(",", expand=True)
-    # print(data[[i + "X", i + "Y"]])
     x_test.drop([i], inplace=True, axis=1)
-
-
-
 
 # Convert data from string values to float
 x_train = x_train.astype(np.float32)
 x_test = x_test.astype(np.float32)
 
-
-
-
+# train_rowsToDrop = []
+# test_rowsToDrop = []
+#
+# for i in range(train_nSeq * nFrames - 1):
+#     if i % nFrames == nFrames - 1:
+#         train_rowsToDrop.append(i)
+#
+#     else:
+#         x_train.iloc[i, :] = x_train.iloc[i+1, :] - x_train.iloc[i, :]
+#
+# for i in range(test_nSeq * nFrames - 1):
+#     if i % nFrames == nFrames - 1:
+#         test_rowsToDrop.append(i)
+#     else:
+#         x_test.iloc[i, :] = x_test.iloc[i+1, :] - x_test.iloc[i, :]
+#
+#
+# for i in range(train_nSeq * nFrames):
+#     if i % nFrames == 0:
+#         continue
+#     else:
+#         x_train.iloc[i, :] = abs(x_train.iloc[i, :]) + abs(x_train.iloc[i-1, :])
+#
+# for i in range(test_nSeq * nFrames):
+#     if i % nFrames == 0:
+#         continue
+#     else:
+#         x_test.iloc[i, :] = abs(x_test.iloc[i, :]) + abs(x_test.iloc[i-1, :])
+#
+# print("Rows to drop: ", train_rowsToDrop)
+# print("Rows to drop: ", len(train_rowsToDrop))
+# print("Not dropped: ", x_train)
+# x_train.drop(train_rowsToDrop, 0, inplace=True)
+# print("Head: ", x_train.head(20))
+# print("Dropped: ", x_train)
+# x_test.drop(test_rowsToDrop, 0, inplace=True)
+# print("Head: ", x_test.head(20))
+# x_train.drop(index=len(x_train)-1, inplace=True)
+# x_test.drop(index=len(x_test)-1, inplace=True)
+# print("træn:", x_test, len(x_test))
 # ---------------------------------------------------------------------------
-#print("x-test", x_test, x_test.shape)
-
-#x_test.iloc[1, :] = x_test.iloc[2, :]
-#print(x_test.iloc[0, :])
-#print(x_test.iloc[1, :])
-#print(x_test.iloc[2, :])
-
-train_rowsToDrop = []
-test_rowsToDrop = []
-
-for i in range(train_nSeq * nFrames - 1):
-    #print(i % nFrames)
-    if i % nFrames == nFrames - 1:
-        train_rowsToDrop.append(i)
-
-    else:
-        x_train.iloc[i, :] = x_train.iloc[i+1, :] - x_train.iloc[i, :]
-
-for i in range(test_nSeq * nFrames - 1):
-    if i % nFrames == nFrames - 1:
-        test_rowsToDrop.append(i)
-    else:
-        x_test.iloc[i, :] = x_test.iloc[i+1, :] - x_test.iloc[i, :]
-
-
-for i in range(train_nSeq * nFrames):
-    if i % nFrames == 0:
-        continue
-    else:
-        x_train.iloc[i, :] = abs(x_train.iloc[i, :]) + abs(x_train.iloc[i-1, :])
-
-for i in range(test_nSeq * nFrames):
-    if i % nFrames == 0:
-        continue
-    else:
-        x_test.iloc[i, :] = abs(x_test.iloc[i, :]) + abs(x_test.iloc[i-1, :])
-
-
-#visualizeData()
-
-print("Rows to drop: ", train_rowsToDrop)
-print("Rows to drop: ", len(train_rowsToDrop))
-print("Not dropped: ", x_train)
-x_train.drop(train_rowsToDrop, 0, inplace=True)
-print("Head: ", x_train.head(20))
-
-print("Dropped: ", x_train)
-
-x_test.drop(test_rowsToDrop, 0, inplace=True)
-print("Head: ", x_test.head(20))
-x_train.drop(index=len(x_train)-1, inplace=True)
-x_test.drop(index=len(x_test)-1, inplace=True)
-print("træn:", x_test, len(x_test))
-# ---------------------------------------------------------------------------
-
-
 # Convert dataset to numpy to allow easier reshaping
 x_train = pd.DataFrame(x_train).to_numpy()
 y_train = pd.DataFrame(y_train).to_numpy()
 x_test = pd.DataFrame(x_test).to_numpy()
 y_test = pd.DataFrame(y_test).to_numpy()
-#print("Converted to np: ", data)
-
 # ------------------------------------------------------------
 # DATA NORMALIZATION
 
@@ -205,20 +191,12 @@ x_test = sklearn.preprocessing.minmax_scale(x_test)  # Normalize data. NOT targe
 
 #y_train = sklearn.preprocessing.minmax_scale(y_train)  # Normalize data. NOT target since its categorical.
 #y_test = sklearn.preprocessing.minmax_scale(y_test)  # Normalize data. NOT target since its categorical.
-#target = sklearn.preprocessing.minmax_scale(target)
 
-#data = sklearn.preprocessing.normalize(data, norm="l1")
-#target = sklearn.preprocessing.normalize(target, norm="l1")
-
-# print(data[0])
-# print("Data: \n", data)
-# print("DATA DTYPE: ", data.dtype)
-# print("TARGET DTYPE: ", target.dtype)
 print("x_train: ", train_nSeq, x_train.shape)
 print("x_test: ", test_nSeq, x_test.shape)
 
-x_train = array(x_train).reshape(train_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
-x_test = array(x_test).reshape(test_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to get time steps(number of frames) into array
+x_train = array(x_train).reshape(train_nSeq, nFrames, dataP)  # Reshape 2D - 3D to get time steps(number of frames) into array
+x_test = array(x_test).reshape(test_nSeq, nFrames, dataP)  # Reshape 2D - 3D to get time steps(number of frames) into array
 
 # ------------------------------------------------------------
 # MODEL TRAINING
@@ -235,7 +213,7 @@ x_test = array(x_test).reshape(test_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to g
 # RNN MODEL 1
 
 # model = Sequential()
-# model.add(LSTM(50, activation='relu', input_shape=(5, 34)))
+# model.add(LSTM(50, activation='relu', input_shape=(5, dataP)))
 # model.add(Dense(1))
 # model.compile(optimizer='adam', loss='mse')
 # history = model.fit(data, target, epochs=1000, validation_split=0.2, verbose=1)
@@ -253,7 +231,7 @@ x_test = array(x_test).reshape(test_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to g
 #                   FALSE will return just one output at the last node
 # model = Sequential()
 #
-# model.add(LSTM(1, batch_input_shape=(None, 5, 34), return_sequences=True))  # 1 is ouput size
+# model.add(LSTM(1, batch_input_shape=(None, 5, dataP), return_sequences=True))  # 1 is ouput size
 # model.add(LSTM(1, return_sequences=False))
 #
 # model.compile(loss='mean_absolute_error', optimizer='adam', metrics=['accuracy'])
@@ -272,7 +250,7 @@ x_test = array(x_test).reshape(test_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to g
 # -------------------------------------------------------------------------------
 # MODEL 3
 # model = Sequential()
-# model.add(LSTM(200, activation='relu', return_sequences=True, input_shape=(5, 34)))
+# model.add(LSTM(200, activation='relu', return_sequences=True, input_shape=(5, dataP)))
 # model.add(LSTM(100, activation='relu', return_sequences=True))
 # model.add(LSTM(50, activation='relu', return_sequences=True))
 # model.add(LSTM(25, activation='relu'))
@@ -295,7 +273,7 @@ x_test = array(x_test).reshape(test_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to g
 # -------------------------------------------------------------------------------
 # MODEL 4
 # model = Sequential()
-# model.add(LSTM(200, activation='relu', return_sequences=True, input_shape=(5, 34)))
+# model.add(LSTM(200, activation='relu', return_sequences=True, input_shape=(5, dataP)))
 # model.add(LSTM(100, activation='relu', return_sequences=True))
 # model.add(LSTM(50, activation='relu', return_sequences=True))
 # model.add(LSTM(25, activation='relu'))
@@ -318,7 +296,7 @@ x_test = array(x_test).reshape(test_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to g
 # -------------------------------------------------------------------------------
 # MODEL 5
 # model = Sequential()
-# model.add(LSTM(100, activation='relu', return_sequences=True, input_shape=(nFrames, 34)))
+# model.add(LSTM(100, activation='relu', return_sequences=True, input_shape=(nFrames, dataP)))
 # model.add(LSTM(50, activation='relu', return_sequences=True))
 # model.add(LSTM(25, activation='relu', return_sequences=True))
 # model.add(LSTM(20, activation='relu'))
@@ -334,7 +312,7 @@ x_test = array(x_test).reshape(test_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to g
 # MODEL 6
 # model = Sequential()
 # #model.add(Dropout(0.25))
-# model.add(Bidirectional(LSTM(400, activation='relu', return_sequences=True, input_shape=(nFrames, 34))))
+# model.add(Bidirectional(LSTM(400, activation='relu', return_sequences=True, input_shape=(nFrames, dataP))))
 # #model.add(Dropout(0.5))
 # model.add(Bidirectional(LSTM(200, activation='relu', return_sequences=True)))
 # #model.add(Bidirectional(LSTM(50, activation='relu', return_sequences=True)))
@@ -358,7 +336,7 @@ x_test = array(x_test).reshape(test_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to g
 # MODEL 7
 # model = Sequential()
 # #model.add(Dropout(0.1))
-# model.add(LSTM(512, activation='relu', return_sequences=True, input_shape=(nFrames, 34)))
+# model.add(LSTM(512, activation='relu', return_sequences=True, input_shape=(nFrames, dataP)))
 # model.add(LSTM(256, activation='relu', return_sequences=True))
 # model.add(LSTM(128, activation='relu', return_sequences=True))
 # model.add(LSTM(64, activation='relu', return_sequences=True))
@@ -377,31 +355,79 @@ x_test = array(x_test).reshape(test_nSeq, nFrames-1, 34)  # Reshape 2D - 3D to g
 # # Can use mse or mean_absolute_error instead of crossentrophy
 # model.compile(loss="sparse_categorical_crossentropy", optimizer='adam', metrics=['accuracy'])
 
-print(nFrames)
 # -------------------------------------------------------------------------------
-# MODEL 7
+# MODEL 8
+# model = Sequential()
+# #model.add(Dropout(0.1))
+# model.add(LSTM(100, activation='tanh', return_sequences=True, input_shape=(nFrames-1, dataP), dropout=0.5))
+# #model.add(LSTM(256, activation='relu', return_sequences=True))
+# model.add(LSTM(75, activation='relu', return_sequences=True, dropout=0.5))
+# model.add(LSTM(50, activation='relu', return_sequences=True, dropout=0.5))
+# model.add(LSTM(20, activation='relu', dropout=0.5))
+#
+# #model.add(Dropout(0.25))
+# model.add(Dense(40, activation='relu'))
+# #model.add(Dropout(0.25))
+# model.add(Dense(20, activation='relu'))
+# #model.add(Dropout(0.25))
+# model.add(Dense(4, activation='softmax'))
+# # model.add(Dense(1)) #- replace with soft for better anomaly detection
+#
+# opt = optimizers.Adam(learning_rate=0.0005)
+# # Can use mse or mean_absolute_error instead of crossentropy
+# model.compile(loss='sparse_categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
+#
+# start_time = time.time()
+# history = model.fit(x_train, y_train, epochs=1500, validation_data=(x_test, y_test))
+# -------------------------------------------------------------------------------
+# MODEL 9
+# model = Sequential()
+#
+# #Stops the model early if value_loss dip
+# #callback = keras.callbacks.EarlyStopping(monitor='val_accuracy', min_delta=0.001, patience=200, verbose=0, mode='auto', restore_best_weights=True)
+# #model.add(Dropout(0.25))
+# model.add(Bidirectional(LSTM(400, activation='relu', return_sequences=True, input_shape=(nFrames, dataP))))
+# #model.add(Dropout(0.3)) # Very nice dropout
+# model.add(Bidirectional(LSTM(200, activation='relu', return_sequences=True, dropout=0.2)))
+# #model.add(Bidirectional(LSTM(50, activation='relu', return_sequences=True)))
+# model.add(Bidirectional(LSTM(100, activation='relu', return_sequences=True, dropout=0.2)))
+# model.add(Bidirectional(LSTM(50, activation='relu', dropout=0.2)))
+# model.add(Dense(80, activation='relu'))
+# #model.add(Dropout(0.5))
+# model.add(Dense(40, activation='relu'))
+# #model.add(Dropout(0.5))
+# model.add(Dense(4, activation='softmax'))
+#
+# model.compile(loss="sparse_categorical_crossentropy", metrics=['accuracy'])
+#
+# start_time = time.time()
+# history = model.fit(x_train, y_train, epochs=150, validation_data=(x_test, y_test)) # ,callbacks=[callback, shuffle=True
+# print("Fit time: %0.2f seconds" % (time.time() - start_time))
+#
+# results = model.predict(x_test, verbose=0)
+
+# MODEL 10
 model = Sequential()
-#model.add(Dropout(0.1))
-model.add(LSTM(100, activation='tanh', return_sequences=True, input_shape=(nFrames-1, 34), dropout=0.5))
-#model.add(LSTM(256, activation='relu', return_sequences=True))
-model.add(LSTM(75, activation='relu', return_sequences=True, dropout=0.5))
-model.add(LSTM(50, activation='relu', return_sequences=True, dropout=0.5))
-model.add(LSTM(20, activation='relu', dropout=0.5))
 
+#Stops the model early if value_loss dip
+#callback = keras.callbacks.EarlyStopping(monitor='val_accuracy', min_delta=0.001, patience=200, verbose=0, mode='auto', restore_best_weights=True)
 #model.add(Dropout(0.25))
-model.add(Dense(40, activation='relu'))
-#model.add(Dropout(0.25))
-model.add(Dense(20, activation='relu'))
-#model.add(Dropout(0.25))
+model.add(Bidirectional(LSTM(200, activation='tanh', return_sequences=True, input_shape=(nFrames, dataP))))
+#model.add(Dropout(0.3)) # Very nice dropout
+model.add(Bidirectional(LSTM(100, activation='tanh', return_sequences=True, dropout=0.2)))
+#model.add(Bidirectional(LSTM(50, activation='relu', return_sequences=True)))
+model.add(Bidirectional(LSTM(50, activation='tanh', return_sequences=True, dropout=0.2)))
+model.add(Bidirectional(LSTM(25, activation='tanh', dropout=0.2)))
+model.add(Dense(60, activation='tanh'))
+model.add(Dropout(0.2))
+model.add(Dense(40, activation='tanh'))
+model.add(Dropout(0.2))
 model.add(Dense(4, activation='softmax'))
-# model.add(Dense(1)) #- replace with soft for better anomaly detection
 
-opt = optimizers.Adam(learning_rate=0.0005)
-# Can use mse or mean_absolute_error instead of crossentropy
-model.compile(loss='sparse_categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
+model.compile(loss="sparse_categorical_crossentropy", metrics=['accuracy'])
 
 start_time = time.time()
-history = model.fit(x_train, y_train, epochs=1500, validation_data=(x_test, y_test))
+history = model.fit(x_train, y_train, epochs=150, validation_data=(x_test, y_test)) #  ,callbacks=[callback, shuffle=True
 print("Fit time: %0.2f seconds" % (time.time() - start_time))
 
 results = model.predict(x_test, verbose=0)
@@ -415,10 +441,6 @@ for e in results:
 plt.scatter(range(len(resultIndex)), y_test, c='g')
 plt.scatter(range(len(resultIndex)), resultIndex, c='b', marker='x')
 plt.show()
-
-# plt.scatter(range(results.size), results, c='b')
-# plt.scatter(range(results.size), y_test, c='g')
-
 
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
@@ -437,9 +459,6 @@ plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 # -------------------------------------------------------------------------------
 # PREDICTION
-# print("1: ", data[0:1, :, :])
-# print("2: ", data[1:2, :, :])
-# print("3: ", data[0:2, :, :])
 start_time = time.time()
 
 # Predict on first sequence ONLY
@@ -450,5 +469,5 @@ test_output = model.predict(x_test, verbose=0)
 print("Prediction time: %0.3f seconds" % (time.time() - start_time))
 print("Prediction: ", test_output)
 # -------------------------------------------Saving & Exporting Model------------------------------------------------
-# model.save('saved_model/my_model')
+model.save('saved_model/my_model')
 

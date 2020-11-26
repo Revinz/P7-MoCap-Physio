@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import sklearn
 # ______________________________________________Data preparation________________________________________
-data = pd.read_csv('training_5ex_10fram_2skip_Sorted.csv')  # Which dataset to read, change versions with V1, V2, V3, etc.
+data = pd.read_csv('V5training_2ex_10frames_2skip_sorted.csv')  # Which dataset to read, change versions with V1, V2, V3, etc.
 
 data["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
 target = data["exercise"]  # Extracts only the target for later prediction
