@@ -13,7 +13,7 @@ export default class PoseNetPredictor {
     this.poseNetSettings = {
       architecture: "MobileNetV1",
       outputStride: 16,
-      inputResolution: { width: 256, height: 256 },
+      inputResolution: { width: 64, height: 64},
       multiplier: 0.75,
     };
     this.poseNet = null;
@@ -30,8 +30,8 @@ export default class PoseNetPredictor {
 
   async LoadImageAsTensor3D(imgPath): Tensor3D {
     //Used to load bundled image -- not used for real-time
-    const imageAssetPath = Image.resolveAssetSource(test_image);
-    imgPath = imageAssetPath.uri;
+    //const imageAssetPath = Image.resolveAssetSource(test_image);
+    //imgPath = imageAssetPath.uri;
 
     //Get image from uri
     const response = await fetch(imgPath, {}, { isBinary: true });
@@ -69,14 +69,14 @@ export default class PoseNetPredictor {
     return tensorImg; //tf.math.l2_normalize(tensorImg);
   }
 
-  async predictImage(imagePath) {
+  async predictImage(image) {
     if (!this.isReady) {
       throw Error(
         "PoseNetPredictor is not setup. Please run the Setup method before using."
       );
     }
     //Load Image
-    let image = await this.LoadImageAsTensor3D(imagePath);
+    //let image = await this.LoadImageAsTensor3D(imagePath);
 
     //PreProcess Image
     //image = this.resizeImage(image);

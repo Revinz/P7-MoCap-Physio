@@ -14,9 +14,12 @@ import {
 import { Permissions } from "expo";
 //import { captureRef } from 'react-native-view-shot';
 import { Camera } from "expo-camera";
+import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
 import React, { useState, useEffect, useRef, Component } from "react";
 import ExerciseCounter from "../ExerciseCounter.js";
 import PoseNetPredictor from "../Predictors/PoseNetPredictor.js";
+
+const TensorCamera = cameraWithTensors(Camera);
 
 const CameraScene = () => {
   let [toggleButton, setButton] = useState(null);
@@ -59,14 +62,99 @@ const CameraScene = () => {
     if (recording) {
       toggleButton.setState({ title: "Stop recording" });
       //this.ToggleButton.setState({textValue: 'Stop recording'});
-      CaptureImage();
+      //CaptureImage();
     } else {
       toggleButton.setState({ title: "Start recording" });
       //this.ToggleButton.setState({textValue: 'Start recording'});
     }
   };
 
-  let GLOBAL_START_ID = 0;
+
+  const HandleCameraStream = async (images, updatePreview, gl) => {
+    await tf.ready();
+    console.log("TF ready")
+
+    let GLOBAL_START_ID = 0;
+
+    if (!netPredictor.isReady) {
+      await netPredictor.Setup();
+    }
+
+    const loop = async () => {
+
+      //console.log("A");
+
+      if (recording) {
+        const nextImageTensor = images.next().value
+
+        // TODO: Send/save tensor here to make a video
+
+        //--------------------------------------------
+
+        console.log("Image: ", nextImageTensor);
+        const idx = GLOBAL_START_ID;
+        GLOBAL_START_ID = GLOBAL_START_ID + 1;
+        console.log("Taking picture");
+        console.log(idx);        
+        
+        //Process the last img
+        console.log("Before predict");
+        netPredictor.predictImage(nextImageTensor).then(async (results) => {
+          console.log("After predict");
+          //const tmp_all_results = processedResults;
+          //tmp_all_results.push(results);
+          //updateProcessedResults(tmp_all_results);
+        });
+
+       /*  try {
+          camera.takePictureAsync(options).then((data) => {
+            console.log("Picture taken...");
+            console.log("Height: " + data.height);
+            console.log("width: " + data.width);
+            //add new image uri to the list with all the uris
+            const tmp_pictureList = pictureURIs;
+            tmp_pictureList.push(data.uri);
+            updatePictureList(tmp_pictureList);
+            console.log(pictureURIs.length);
+            console.log(idx);
+
+            //Process the last img
+            console.log("Before predict");
+            netPredictor.predictImage(data.uri).then(async (results) => {
+              console.log("After predict");
+              const tmp_all_results = processedResults;
+              tmp_all_results.push(results);
+              updateProcessedResults(tmp_all_results);
+            });
+          });
+        } 
+        catch (err) {
+          console.log(err);
+        } 
+
+        if (recording) {
+          setTimeout(CaptureImage, captureDelayMS); // Run function again after delay
+        }*/
+        setTimeout(loop, captureDelayMS); // Run function again after delay when recording
+      } else {
+        setTimeout(loop, 1); // Loop instantly if not recording
+      }
+      
+      
+
+      // if autorender is false you need the following two lines.
+      // updatePreview();
+      // gl.endFrameEXP();
+
+      //requestAnimation(loop);
+    }
+    loop();
+  }
+
+
+
+  /* let GLOBAL_START_ID = 0;
+
   var CaptureImage = async () => {
     const idx = GLOBAL_START_ID;
     GLOBAL_START_ID = GLOBAL_START_ID + 1;
@@ -104,7 +192,7 @@ const CameraScene = () => {
         setTimeout(CaptureImage, captureDelayMS); // Run function again after delay
       }
     }
-  };
+  }; */
 
   var PoseNetProcessImg = async (img_uri) => {
     //Posenet process and then save it
@@ -119,7 +207,21 @@ const CameraScene = () => {
     //run it on our model
   };
 
+  let textureDims;
+   if (Platform.OS === 'ios') {
+    textureDims = {
+      height: 1920,
+      width: 1080,
+    };
+   } else {
+    textureDims = {
+      height: 1200,
+      width: 1600,
+    };
+   }
+   
   return (
+    
     <View style={styles.main}>
       <ExerciseCounter />
       <View style={styles.header}>
@@ -141,15 +243,18 @@ const CameraScene = () => {
         </View>
       </View>
 
-      <Camera
-        ref={(ref) => setCamera(ref)}
-        style={{ flex:6 }}
-        type={type}
-        r
-        onCameraReady={console.log("Camera is ready.")}
-        useCamera2Api={true}
-        autoFocus={false}
-        pictureSize={"320x240"}
+      <TensorCamera
+        // Standard Camera props
+        style={{flex:6}}
+        type={Camera.Constants.Type.front}
+        // Tensor related props
+        cameraTextureHeight={textureDims.height}
+        cameraTextureWidth={textureDims.width}
+        resizeHeight={64}
+        resizeWidth={64}
+        resizeDepth={3}
+        onReady={HandleCameraStream}
+        autorender={true}
       >
         <View style={styles.cameraview}>
           <TouchableOpacity
@@ -165,7 +270,7 @@ const CameraScene = () => {
             <Text style={styles.flipText}> Flip </Text>
           </TouchableOpacity>
         </View>
-      </Camera>
+      </TensorCamera>
       <Button
         title={recording ? "Stop recording" : "Start recording"}
         ref={(ref) => setButton(ref)}
