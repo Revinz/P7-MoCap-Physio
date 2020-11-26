@@ -12,9 +12,9 @@ export default class PoseNetPredictor {
 
     this.poseNetSettings = {
       architecture: "MobileNetV1",
-      outputStride: 16,
+      outputStride: 8,
       inputResolution: { width: 64, height: 64},
-      multiplier: 0.75,
+      multiplier: 0.5,
     };
     this.poseNet = null;
     this.isReady = false;

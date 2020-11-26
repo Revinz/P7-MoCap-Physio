@@ -34,7 +34,7 @@ const CameraScene = () => {
   // Results from the posenet processing
   let [processedResults, updateProcessedResults] = useState([]);
 
-  let captureDelayMS = 50;
+  let captureDelayMS = 20;
   var options = {
     quality: 1,
     base64: true,
@@ -69,6 +69,7 @@ const CameraScene = () => {
     }
   };
 
+  // https://js.tensorflow.org/api_react_native/0.2.1/ tensor camera doc
 
   const HandleCameraStream = async (images, updatePreview, gl) => {
     await tf.ready();
@@ -90,12 +91,12 @@ const CameraScene = () => {
         // TODO: Send/save tensor here to make a video
 
         //--------------------------------------------
-
-        console.log("Image: ", nextImageTensor);
         const idx = GLOBAL_START_ID;
         GLOBAL_START_ID = GLOBAL_START_ID + 1;
-        console.log("Taking picture");
-        console.log(idx);        
+        console.log("Image: ", idx, nextImageTensor);
+        
+        console.log("Taking picture", idx);
+             
         
         //Process the last img
         console.log("Before predict");
