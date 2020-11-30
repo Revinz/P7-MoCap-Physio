@@ -55,12 +55,13 @@ export default class ExercisePredictor {
       //Predict on joints
       const poseTensor = tf.tensor3d(last10Poses.flat(), [1, 10, 34]);
       console.log("Predicting exercise...");
-      const prediction = this.model.predict(poseTensor);
+      const prediction = this.model
+        .predict(poseTensor, { batchSize: 1 })
+        .arraySync();
       console.log("Prediction:");
-      console.log(prediction.arraySync());
+      console.log(prediction);
       //console.log(pose);r
-      return undefined;
-      r;
+      return prediction;
     }
 
     console.log("Not enough poses gathered to be able to predict.");
