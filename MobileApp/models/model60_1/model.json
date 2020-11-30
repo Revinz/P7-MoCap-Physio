@@ -13,7 +13,7 @@
           {
             "class_name": "InputLayer",
             "config": {
-              "batch_input_shape": [null, 10, 34],
+              "batch_input_shape": [1, 10, 34],
               "dtype": "float32",
               "sparse": false,
               "ragged": false,
@@ -31,7 +31,7 @@
                 "config": {
                   "name": "lstm",
                   "trainable": true,
-                  "batch_input_shape": [null, 10, 34],
+                  "batch_input_shape": [1, 10, 34],
                   "dtype": "float32",
                   "return_sequences": true,
                   "return_state": false,

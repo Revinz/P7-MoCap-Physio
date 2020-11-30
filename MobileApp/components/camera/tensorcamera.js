@@ -14,10 +14,11 @@ import {
 import { Permissions } from "expo";
 //import { captureRef } from 'react-native-view-shot';
 import { Camera } from "expo-camera";
-import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
+import { cameraWithTensors } from "@tensorflow/tfjs-react-native";
 import React, { useState, useEffect, useRef, Component } from "react";
 import ExerciseCounter from "../ExerciseCounter.js";
 import PoseNetPredictor from "../Predictors/PoseNetPredictor.js";
+import ExercisePredictor from "../Predictors/ExercisePredictor.js";
 
 const TensorCamera = cameraWithTensors(Camera);
 
@@ -27,6 +28,7 @@ const CameraScene = () => {
   let [hasPermission, setHasPermission] = useState(null);
   let [type, setType] = useState(Camera.Constants.Type.back);
   const netPredictor = new PoseNetPredictor();
+  const exercisePredictor = new ExercisePredictor();
 
   /* variables used for processing */
   const AMOUNT_FRAMES_FOR_PROCESSING = 5;
@@ -73,7 +75,7 @@ const CameraScene = () => {
 
   const HandleCameraStream = async (images, updatePreview, gl) => {
     await tf.ready();
-    console.log("TF ready")
+    console.log("TF ready");
 
     let GLOBAL_START_ID = 0;
 
@@ -81,12 +83,15 @@ const CameraScene = () => {
       await netPredictor.Setup();
     }
 
-    const loop = async () => {
+    if (!exercisePredictor.isReady) {
+      await exercisePredictor.Setup();
+    }
 
+    const loop = async () => {
       //console.log("A");
 
       if (recording) {
-        const nextImageTensor = images.next().value
+        const nextImageTensor = images.next().value;
 
         // TODO: Send/save tensor here to make a video
 
@@ -94,65 +99,32 @@ const CameraScene = () => {
         const idx = GLOBAL_START_ID;
         GLOBAL_START_ID = GLOBAL_START_ID + 1;
         console.log("Image: ", idx, nextImageTensor);
-        
+
         console.log("Taking picture", idx);
-             
-        
+
         //Process the last img
         console.log("Before predict");
-        netPredictor.predictImage(nextImageTensor).then(async (results) => {
+        netPredictor.predictImage(nextImageTensor).then(async (pose) => {
           console.log("After predict");
           //const tmp_all_results = processedResults;
           //tmp_all_results.push(results);
           //updateProcessedResults(tmp_all_results);
+          exercisePredictor.predictExercise(pose);
         });
 
-       /*  try {
-          camera.takePictureAsync(options).then((data) => {
-            console.log("Picture taken...");
-            console.log("Height: " + data.height);
-            console.log("width: " + data.width);
-            //add new image uri to the list with all the uris
-            const tmp_pictureList = pictureURIs;
-            tmp_pictureList.push(data.uri);
-            updatePictureList(tmp_pictureList);
-            console.log(pictureURIs.length);
-            console.log(idx);
-
-            //Process the last img
-            console.log("Before predict");
-            netPredictor.predictImage(data.uri).then(async (results) => {
-              console.log("After predict");
-              const tmp_all_results = processedResults;
-              tmp_all_results.push(results);
-              updateProcessedResults(tmp_all_results);
-            });
-          });
-        } 
-        catch (err) {
-          console.log(err);
-        } 
-
-        if (recording) {
-          setTimeout(CaptureImage, captureDelayMS); // Run function again after delay
-        }*/
         setTimeout(loop, captureDelayMS); // Run function again after delay when recording
       } else {
         setTimeout(loop, 1); // Loop instantly if not recording
       }
-      
-      
 
       // if autorender is false you need the following two lines.
       // updatePreview();
       // gl.endFrameEXP();
 
       //requestAnimation(loop);
-    }
+    };
     loop();
-  }
-
-
+  };
 
   /* let GLOBAL_START_ID = 0;
 
@@ -209,20 +181,19 @@ const CameraScene = () => {
   };
 
   let textureDims;
-   if (Platform.OS === 'ios') {
+  if (Platform.OS === "ios") {
     textureDims = {
       height: 1920,
       width: 1080,
     };
-   } else {
+  } else {
     textureDims = {
       height: 1200,
       width: 1600,
     };
-   }
-   
+  }
+
   return (
-    
     <View style={styles.main}>
       <ExerciseCounter />
       <View style={styles.header}>
@@ -246,7 +217,7 @@ const CameraScene = () => {
 
       <TensorCamera
         // Standard Camera props
-        style={{flex:6}}
+        style={{ flex: 6 }}
         type={Camera.Constants.Type.front}
         // Tensor related props
         cameraTextureHeight={textureDims.height}
