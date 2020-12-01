@@ -15,7 +15,7 @@ import shutil
 #       - the only downside of making too many is that it might make too many overlapping/similar excerpts
 #         which leads to a false increase in accuracy (aka. overfitting)
 #               - Might be possible to counteract this with dropouts.
-amountOfExcerptsPerVid = 5
+amountOfExcerptsPerVid = 20
 
 # How many frames to use per video
 #   high should, in theory, be more accurate, but slower.
@@ -24,7 +24,7 @@ amountOfFramesPerExcerpt = 5
 # How many frames to skip between each frame to use for the output (0 means no frames skipped)
 # use frame x and x + framesToSkip + 1 (so first and every 'framesToSkip+1'th frame)
 # ex. (framesToSkip = 5): frame 0 and frame 6
-framesToSkip = 5
+framesToSkip = 0
 
 # Write the folder names for each of the excercises
 exercises = 'ClamShells GluteBridge \
