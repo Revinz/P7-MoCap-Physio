@@ -76,24 +76,25 @@ def visualizeData():
 
 # --------------------------------------------------------------------------------
 # DATA PREPARATION
-x_train = pd.read_csv('V6training20ex_5frames_0skips_sorted.csv')
-x_test = pd.read_csv('V4test_5ex_10fram_2skip_Sorted.csv')
+x_train = pd.read_csv('V7training_10ex_5frames_3skip_sorted.csv')
+x_test = pd.read_csv('V7test_10ex_5frames_3skip_sorted.csv')
 
-x_train["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
+x_train["exercise"].replace({"ForwardLunge": 0, "SingleLegDeadlift": 1, "Squat": 2, "StandingHipAbduction": 3, "StepUps": 4}, inplace=True)
 y_train = x_train["exercise"]
 
-x_test["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
+x_test["exercise"].replace({"ForwardLunge": 0, "SingleLegDeadlift": 1, "Squat": 2, "StandingHipAbduction": 3, "StepUps": 4}, inplace=True)
 y_test = x_test["exercise"]
 
 nFrames = np.amax(x_train["Frame Number"]) + 1  # Length of frames pr. Sequences.
-dataP = 26  # Needs to be manually changed!
+dataP = 34  # Needs to be manually changed! Total is 34 (17 joints with x & y) otherwise 26 with unecessaries removed
 
 y_train = y_train[0::nFrames]  # Splits target into the total number of sequences
 y_test = y_test[0::nFrames]  # Splits target into the total number of sequences
 
 train_nSeq = len(y_train)  # Total number of sequences
 test_nSeq = len(y_test)  # Total number of sequences
-
+print(train_nSeq)
+print(test_nSeq)
 # Remove the columns we don't need.
 # Drop all unnecessary data columns
 x_train.drop(["exercise"], inplace=True, axis=1)
@@ -103,10 +104,10 @@ x_train.drop(["Frame Number"], inplace=True, axis=1)
 x_train.drop(x_train.columns[0], inplace=True, axis=1)  # Remove the mystery first column
 
 # Unnecessary Joints
-x_train.drop(["Right Eye"], inplace=True, axis=1)
-x_train.drop(["Left Eye"], inplace=True, axis=1)
-x_train.drop(["Right Ear"], inplace=True, axis=1)
-x_train.drop(["Left Ear"], inplace=True, axis=1)
+#x_train.drop(["Right Eye"], inplace=True, axis=1)
+#x_train.drop(["Left Eye"], inplace=True, axis=1)
+#x_train.drop(["Right Ear"], inplace=True, axis=1)
+#x_train.drop(["Left Ear"], inplace=True, axis=1)
 
 # Test set below
 x_test.drop(["exercise"], inplace=True, axis=1)
@@ -116,11 +117,12 @@ x_test.drop(["Frame Number"], inplace=True, axis=1)
 x_test.drop(x_test.columns[0], inplace=True, axis=1)  # Remove the mystery first column
 
 # Unnecessary Joints
-x_test.drop(["Right Eye"], inplace=True, axis=1)
-x_test.drop(["Left Eye"], inplace=True, axis=1)
-x_test.drop(["Right Ear"], inplace=True, axis=1)
-x_test.drop(["Left Ear"], inplace=True, axis=1)
+#x_test.drop(["Right Eye"], inplace=True, axis=1)
+#x_test.drop(["Left Eye"], inplace=True, axis=1)
+#x_test.drop(["Right Ear"], inplace=True, axis=1)
+#x_test.drop(["Left Ear"], inplace=True, axis=1)
 
+# Split features into x & y
 columns = list(x_train)
 for i in columns:
     x_train[[i + "X", i + "Y"]] = x_train[[i][0]].str.split(",", expand=True)
@@ -412,44 +414,79 @@ model = Sequential()
 #Stops the model early if value_loss dip
 #callback = keras.callbacks.EarlyStopping(monitor='val_accuracy', min_delta=0.001, patience=200, verbose=0, mode='auto', restore_best_weights=True)
 #model.add(Dropout(0.25))
+
 model.add(Bidirectional(LSTM(200, activation='tanh', return_sequences=True, input_shape=(nFrames, dataP))))
 #model.add(Dropout(0.3)) # Very nice dropout
-model.add(Bidirectional(LSTM(100, activation='tanh', return_sequences=True, dropout=0.2)))
+model.add(Bidirectional(LSTM(100, activation='tanh', return_sequences=True, dropout=0.3)))
 #model.add(Bidirectional(LSTM(50, activation='relu', return_sequences=True)))
-model.add(Bidirectional(LSTM(50, activation='tanh', return_sequences=True, dropout=0.2)))
-model.add(Bidirectional(LSTM(25, activation='tanh', dropout=0.2)))
-model.add(Dense(60, activation='tanh'))
+model.add(Bidirectional(LSTM(50, activation='tanh', return_sequences=True, dropout=0.3)))
+model.add(Bidirectional(LSTM(25, activation='tanh', dropout=0.3)))
+model.add(Dense(68, activation='tanh'))
 model.add(Dropout(0.2))
-model.add(Dense(40, activation='tanh'))
+model.add(Dense(34, activation='tanh'))
 model.add(Dropout(0.2))
-model.add(Dense(4, activation='softmax'))
+model.add(Dense(5, activation='softmax'))
 
-model.compile(loss="sparse_categorical_crossentropy", metrics=['accuracy'])
+model.compile(loss="sparse_categorical_crossentropy", metrics=['accuracy'], optimizer='adam')
 
 start_time = time.time()
-history = model.fit(x_train, y_train, epochs=150, validation_data=(x_test, y_test)) #  ,callbacks=[callback, shuffle=True
+history = model.fit(x_train, y_train, epochs=200, validation_data=(x_test, y_test)) #  ,callbacks=[callback, shuffle=True, batch_size=train_nSeq
 print("Fit time: %0.2f seconds" % (time.time() - start_time))
 
 results = model.predict(x_test, verbose=0)
+# MODEL 11
+# model = Sequential()
+#
+# #Stops the model early if value_loss dip
+# #callback = keras.callbacks.EarlyStopping(monitor='val_accuracy', min_delta=0.001, patience=200, verbose=0, mode='auto', restore_best_weights=True)
+# #model.add(Dropout(0.25))
+#
+# #model.add(LSTM(200, activation='tanh', return_sequences=True, input_shape=(nFrames, dataP)))
+# #model.add(Dropout(0.3)) # Very nice dropout
+# #model.add(LSTM(100, activation='tanh', return_sequences=True, dropout=0.2))
+# #model.add(Bidirectional(LSTM(50, activation='relu', return_sequences=True)))
+# model.add(LSTM(34, activation='tanh', return_sequences=True, dropout=0.5))
+# model.add(LSTM(68, activation='tanh', return_sequences=True, dropout=0.5))
+# model.add(LSTM(68, activation='tanh', return_sequences=True, dropout=0.5))
+# model.add(LSTM(17, activation='tanh', dropout=0.5))
+# #model.add(Dense(64, activation='tanh'))
+# #model.add(Dense(64, activation='tanh'))
+# #model.add(Dropout(0.2))
+# #model.add(Dense(32, activation='tanh'))
+# #model.add(Dropout(0.2))
+# model.add(Dense(20, activation='tanh'))
+# model.add(Dense(20, activation='tanh'))
+# #model.add(Dropout(0.1))
+# model.add(Dense(5, activation='softmax'))
+#
+# model.compile(loss="sparse_categorical_crossentropy", metrics=['accuracy'], optimizer='adam')
+#
+# start_time = time.time()
+# history = model.fit(x_train, y_train, epochs=250, validation_data=(x_test, y_test)) #  ,callbacks=[callback, shuffle=True , batch_size=train_nSeq
+# print("Fit time: %0.2f seconds" % (time.time() - start_time))
+#
+# results = model.predict(x_test, verbose=0)
 np.set_printoptions(suppress=True)
 
 resultIndex = []
 for e in results:
     i = np.argmax(e)
     resultIndex.append(i)
-
+plt.figure(figsize=(16, 7))
+ax1 = plt.subplot(1, 3, 1)
 plt.scatter(range(len(resultIndex)), y_test, c='g')
 plt.scatter(range(len(resultIndex)), resultIndex, c='b', marker='x')
-plt.show()
-
+#plt.show()
+ax2 = plt.subplot(1, 3, 2)
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
-plt.show()
+#plt.show()
 # summarize history for loss
+ax3 = plt.subplot(1, 3, 3)
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
 plt.title('model loss')
