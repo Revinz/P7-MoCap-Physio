@@ -126,47 +126,6 @@ const CameraScene = () => {
     loop();
   };
 
-  /* let GLOBAL_START_ID = 0;
-
-  var CaptureImage = async () => {
-    const idx = GLOBAL_START_ID;
-    GLOBAL_START_ID = GLOBAL_START_ID + 1;
-    if (!netPredictor.isReady) {
-      await netPredictor.Setup();
-    }
-    if (camera) {
-      try {
-        camera.takePictureAsync(options).then((data) => {
-          console.log("Picture taken...");
-          console.log("Height: " + data.height);
-          console.log("width: " + data.width);
-
-          //add new image uri to the list with all the uris
-          const tmp_pictureList = pictureURIs;
-          tmp_pictureList.push(data.uri);
-          updatePictureList(tmp_pictureList);
-          console.log(pictureURIs.length);
-          console.log(idx);
-
-          //Process the last img
-          console.log("Before predict");
-          netPredictor.predictImage(data.uri).then(async (results) => {
-            console.log("After predict");
-            const tmp_all_results = processedResults;
-            tmp_all_results.push(results);
-            updateProcessedResults(tmp_all_results);
-          });
-        });
-      } catch (err) {
-        console.log(err);
-      }
-
-      if (recording) {
-        setTimeout(CaptureImage, captureDelayMS); // Run function again after delay
-      }
-    }
-  }; */
-
   var PoseNetProcessImg = async (img_uri) => {
     //Posenet process and then save it
     frameResult = await netPredictor.predictImage(data.uri);

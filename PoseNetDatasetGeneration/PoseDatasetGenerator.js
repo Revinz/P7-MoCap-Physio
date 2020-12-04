@@ -16,11 +16,18 @@ var pathSort = require("path-sort").standalone("/");
 // https://github.com/tensorflow/tfjs-models/blob/master/posenet/README.md
 const width = 256;
 const height = 256;
+// let PoseNetSettings = {
+//   architecture: "MobileNetV1",
+//   outputStride: 16,
+//   inputResolution: { width: width, height: height }, //Must match the
+//   multiplier: 0.75,
+// };
+
 let PoseNetSettings = {
-  architecture: "MobileNetV1",
+  architecture: "ResNet50",
   outputStride: 16,
-  inputResolution: { width: width, height: height }, //Must match the
-  multiplier: 0.75,
+  inputResolution: { width: width, height: height },
+  quantBytes: 2,
 };
 
 // If the exercise label is incorrect, change this value.

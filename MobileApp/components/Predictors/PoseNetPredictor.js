@@ -13,7 +13,7 @@ export default class PoseNetPredictor {
     this.poseNetSettings = {
       architecture: "MobileNetV1",
       outputStride: 8,
-      inputResolution: { width: 64, height: 64},
+      inputResolution: { width: 64, height: 64 },
       multiplier: 0.5,
     };
     this.poseNet = null;
@@ -87,7 +87,6 @@ export default class PoseNetPredictor {
       flipHorizontal: false,
     });
 
-    //console.log(pose);
     return pose;
   }
 }
