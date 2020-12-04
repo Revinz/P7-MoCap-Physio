@@ -18,6 +18,10 @@ import React, { useState, useEffect, useRef, Component } from "react";
 import ExerciseCounter from "../ExerciseCounter.js";
 import PoseNetPredictor from "../Predictors/PoseNetPredictor.js";
 
+import AudioManager from "../AudioManager.js";
+const audioManager = new AudioManager();
+//audioManager.setupAudio();
+
 const CameraScene = () => {
   let [toggleButton, setButton] = useState(null);
   let [camera, setCamera] = useState(null);
@@ -145,11 +149,12 @@ const CameraScene = () => {
         ref={(ref) => setCamera(ref)}
         style={{ flex:6 }}
         type={type}
-        r
-        onCameraReady={console.log("Camera is ready.")}
+        onCameraReady={() => {
+          console.log("Camera ready");AudioManager.playAudioFeedback(0, 0)}}
         useCamera2Api={true}
         autoFocus={false}
-        pictureSize={"320x240"}
+        pictureSize={"360x480"}
+        ratio={"1:1"}
       >
         <View style={styles.cameraview}>
           <TouchableOpacity

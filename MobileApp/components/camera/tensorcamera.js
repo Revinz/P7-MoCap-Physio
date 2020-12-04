@@ -16,9 +16,10 @@ import { Permissions } from "expo";
 import { Camera } from "expo-camera";
 import { cameraWithTensors } from "@tensorflow/tfjs-react-native";
 import React, { useState, useEffect, useRef, Component } from "react";
-import ExerciseCounter from "../ExerciseCounter.js";
+//import ExerciseCounter from "../ExerciseCounter.js";
 import PoseNetPredictor from "../Predictors/PoseNetPredictor.js";
 import ExercisePredictor from "../Predictors/ExercisePredictor.js";
+import AudioManager from "../AudioManager.js";
 
 const TensorCamera = cameraWithTensors(Camera);
 
@@ -29,6 +30,8 @@ const CameraScene = () => {
   let [type, setType] = useState(Camera.Constants.Type.back);
   const netPredictor = new PoseNetPredictor();
   const exercisePredictor = new ExercisePredictor();
+  //const exerciseCounter = new ExerciseCounter();
+  const audioManager = new AudioManager();
 
   /* variables used for processing */
   const AMOUNT_FRAMES_FOR_PROCESSING = 5;
@@ -58,6 +61,8 @@ const CameraScene = () => {
     return <Text>No access to camera</Text>;
   }
 
+  //audioManager.setupAudio();
+
   var ToggleRecording = async () => {
     recording = !recording;
 
@@ -74,6 +79,7 @@ const CameraScene = () => {
   // https://js.tensorflow.org/api_react_native/0.2.1/ tensor camera doc
 
   const HandleCameraStream = async (images, updatePreview, gl) => {
+    AudioManager.playAudioFeedback(0, 0);
     await tf.ready();
     console.log("TF ready");
 
@@ -109,7 +115,7 @@ const CameraScene = () => {
           //const tmp_all_results = processedResults;
           //tmp_all_results.push(results);
           //updateProcessedResults(tmp_all_results);
-          exercisePredictor.predictExercise(pose);
+          exercisePredictor.predictExercise(pose)
         });
 
         setTimeout(loop, captureDelayMS); // Run function again after delay when recording
@@ -154,7 +160,7 @@ const CameraScene = () => {
 
   return (
     <View style={styles.main}>
-      <ExerciseCounter />
+      {/* <ExerciseCounter /> */}
       <View style={styles.header}>
         <View style={styles.lightbulb}>
           {/*<Image source={require("./images/lightbulb.png")} />*/}
