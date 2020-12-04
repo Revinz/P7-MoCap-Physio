@@ -18,26 +18,9 @@ import React, { useState, useEffect, useRef, Component } from "react";
 import ExerciseCounter from "../ExerciseCounter.js";
 import PoseNetPredictor from "../Predictors/PoseNetPredictor.js";
 
-
-//------------------------------------------------------------------------------------------------------------
-// AUDIO
-var Sound = require('react-native-sound');
-Sound.setCategory('Playback'); // Enable playback in silence mode
-
-// https://www.npmjs.com/package/react-native-sound
-// Save your sound clip files under the directory android/app/src/main/res/raw
-// Note that files in this directory must be lowercase, underscored and begin with a letter (e.g. my_file_name.mp3) and that subdirectories are not supported by Android.
-
-try {
-  var audio_pleaseBegin = new Sound('voice_2_1_please_begin.mp4', Sound.MAIN_BUNDLE);
-  var audio_firstDone = new Sound('voice_2_2_first_repetition_done', Sound.MAIN_BUNDLE);
-  var audio_secondDone = new Sound('voice_3_3_second.mp4', Sound.MAIN_BUNDLE);
-  var audio_didWrongTryAgain = new Sound('voice_1_1_did_wrong_try_again.mp4', Sound.MAIN_BUNDLE);
-
-} catch (error) {
-  console.log("Error loading audio: ", error)
-}
-//------------------------------------------------------------------------------------------------------------
+import AudioManager from "../AudioManager.js";
+const audioManager = new AudioManager();
+//audioManager.setupAudio();
 
 const CameraScene = () => {
   let [toggleButton, setButton] = useState(null);
@@ -72,27 +55,6 @@ const CameraScene = () => {
   }
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
-  }
-
-
-  var currentRep = 0;
-
-  function GiveAudioFeedback() {
-
-    switch(currentRep) {
-      case 0:
-        audio_pleaseBegin.play();
-        break;
-      case 1:
-        audio_firstDone.play();
-        break;
-      case 2:
-        audio_secondDone.play();
-        break;
-      default:
-        console.log("Give audio feedback went wrong")
-    }
-
   }
 
   var ToggleRecording = async () => {
@@ -187,15 +149,8 @@ const CameraScene = () => {
         ref={(ref) => setCamera(ref)}
         style={{ flex:6 }}
         type={type}
-        r
         onCameraReady={() => {
-          console.log("Camera ready");audio_pleaseBegin.play((success) => {
-          if (success) {
-            console.log('successfully finished playing');
-          } else {
-            console.log('playback failed due to audio decoding errors');
-          }
-        })}}
+          console.log("Camera ready");AudioManager.playAudioFeedback(0, 0)}}
         useCamera2Api={true}
         autoFocus={false}
         pictureSize={"360x480"}
