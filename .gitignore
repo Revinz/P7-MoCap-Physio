@@ -177,3 +177,6 @@ package-lock.json
 
 /node_modules
 *.zip
+NotificationServer/.env
+NotificationServer/p7physio-firebase-adminsdk.json
+app-web-controller/p7physio-firebase-adminsdk.json

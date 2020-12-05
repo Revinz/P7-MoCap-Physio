@@ -3,8 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { messaging } from "./firebase/firebaseInit.js";
-console.log(messaging);
+
 ReactDOM.render(
   <React.StrictMode>
     <App />
