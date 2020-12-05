@@ -147,10 +147,12 @@ const CameraScene = () => {
 
       <Camera
         ref={(ref) => setCamera(ref)}
-        style={{ flex:6 }}
+        style={{ flex: 6 }}
         type={type}
         onCameraReady={() => {
-          console.log("Camera ready");AudioManager.playAudioFeedback(0, 0)}}
+          console.log("Camera ready");
+          AudioManager.playAudioFeedback(0, 0);
+        }}
         useCamera2Api={true}
         autoFocus={false}
         pictureSize={"360x480"}

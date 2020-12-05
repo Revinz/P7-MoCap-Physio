@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "519486183773",
+    "project_id": "p7physio",
+    "storage_bucket": "p7physio.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519486183773:android:e689ce19b39dfae96bb0b4",
+        "android_client_info": {
+          "package_name": "com.mobileapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "519486183773-9iql91urlcubhrtnefm8sbg46gpoq1qi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdQd5zWuzCJxypbJpDQUhA_HO-Xnfb7s0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "519486183773-9iql91urlcubhrtnefm8sbg46gpoq1qi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
