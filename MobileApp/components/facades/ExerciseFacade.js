@@ -1,5 +1,6 @@
 import React from "react";
 import messaging from "@react-native-firebase/messaging";
+import { Alert } from "react-native";
 
 export default class ExerciseFacade extends React.Component {
   constructor(props) {
@@ -31,7 +32,7 @@ export default class ExerciseFacade extends React.Component {
 
   onMessageReceived(remoteMessage) {
     const data = remoteMessage.data;
-    console.log("NEW MESSAGE: ", JSON.stringify(remoteMessage));
+    Alert.alert("NEW MESSAGE: ", JSON.stringify(remoteMessage));
     return;
     switch (data.type) {
       case "SET_CURR_EXERCISE":
