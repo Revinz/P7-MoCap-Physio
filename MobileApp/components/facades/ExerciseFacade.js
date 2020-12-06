@@ -31,10 +31,13 @@ export default class ExerciseFacade extends React.Component {
   }
 
   onMessageReceived(remoteMessage) {
-    const data = remoteMessage.data;
-    Alert.alert("NEW MESSAGE: ", JSON.stringify(remoteMessage));
+    const json = JSON.stringify(remoteMessage);
+    console.log(json)
+    const data = JSON.parse(json).data;
+    console.log(data)
+    Alert.alert("NEW MESSAGE: ", JSON.stringify(data));
     return;
-    switch (data.type) {
+    switch (data.action) {
       case "SET_CURR_EXERCISE":
         break;
       case "DECREASE_REM_REPS":

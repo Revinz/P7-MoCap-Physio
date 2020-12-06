@@ -28,6 +28,16 @@ app.get("/test", (req, res) => {
   res.send(testData);
 });
 
+app.get("/increaserep", (req, res) => {
+  const data = 
+    { id: "test",
+      testType: 0,
+      action: "DECREASE_REM_REPS"
+    };
+  SendData(data);
+  res.send(data);
+});
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
