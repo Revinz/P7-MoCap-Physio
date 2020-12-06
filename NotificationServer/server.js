@@ -23,9 +23,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/test", (req, res) => {
-  const testData = { Hello: "world" };
-  SendData({ Hello: "world" });
-  res.send(testData);
+  SendData(req, "HELLO WORLD PARAMS");
+  res.send(req.query);
 });
 
 app.listen(port, () => {
