@@ -1,42 +1,38 @@
 // Send a message to devices subscribed to the provided topic.
 const admin = require("firebase-admin");
 const creds = require("./p7physio-firebase-adminsdk.json");
+const dotenv = require("dotenv");
+dotenv.config();
 
 admin.initializeApp({
   credential: admin.credential.cert(creds),
   databaseURL: process.env.DATABASE_URL,
 });
 
+const database = admin.database();
+
 const topic = "P7";
-const SendData = (req, action) => {
+
+const getDeviceToken = async (uid) => {
+  const ref = database.ref("/participants/" + uid);
+  const result = await ref.once("value");
+  return result.val().token;
+};
+
+const SendData = async (req, action) => {
   const data = {
     ID: req.query.id,
     testtype: req.query.type,
     action: action,
   };
+  const token = await getDeviceToken(req.query.id);
+  console.log(token);
   const message = {
     data,
-    topic: topic,
     android: {
       priority: "high",
     },
-    apns: {
-      payload: {
-        aps: {
-          contentAvailable: true,
-        },
-      },
-      headers: {
-        "apns-push-type": "background",
-        "apns-priority": "5",
-        "apns-topic": "", // your app bundle identifier
-      },
-    },
-    webpush: {
-      headers: {
-        Urgency: "high",
-      },
-    },
+    token: token,
   };
 
   //Sends the message

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "519486183773",
+    "firebase_url": "https://p7physio-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "p7physio",
     "storage_bucket": "p7physio.appspot.com"
   },

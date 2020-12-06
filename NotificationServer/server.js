@@ -23,7 +23,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/test", (req, res) => {
-  SendData(req, "HELLO WORLD PARAMS");
+  try {
+    SendData(req, "HELLO WORLD PARAMS");
+  } catch (err) {
+    res.status(500);
+    res.send("Error while sending");
+  }
   res.send(req.query);
 });
 
