@@ -8,10 +8,35 @@ admin.initializeApp({
 });
 
 const topic = "P7";
-const SendData = (data) => {
+const SendData = (req, action) => {
+  const data = {
+    ID: req.query.id,
+    testtype: req.query.type,
+    action: action,
+  };
   const message = {
     data,
     topic: topic,
+    android: {
+      priority: "high",
+    },
+    apns: {
+      payload: {
+        aps: {
+          contentAvailable: true,
+        },
+      },
+      headers: {
+        "apns-push-type": "background",
+        "apns-priority": "5",
+        "apns-topic": "", // your app bundle identifier
+      },
+    },
+    webpush: {
+      headers: {
+        Urgency: "high",
+      },
+    },
   };
 
   //Sends the message
