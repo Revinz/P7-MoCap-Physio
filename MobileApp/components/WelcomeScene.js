@@ -28,7 +28,8 @@ export default class WelcomeScene extends React.Component {
         //justifyContent: "space-between",
       },
       input: {
-        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
         backgroundColor: "#FFF",
         flexDirection: "column",
       },
@@ -43,30 +44,36 @@ export default class WelcomeScene extends React.Component {
     //Note: the onPress={} requires the '() =>' to be able to work properly
     //Actions.camera() simply means it goes to the camera page.
     return (
-      <TouchableOpacity
-        style={{ margin: 128 }}
-        onPress={
-          UpdateParticipantToken("TEST_ID_TEST") /*() => Actions.camera()*/
-        }
-      >
+      <View style={styles.input}>
         <Text>WELCOME PAGE!</Text>
         <ExerciseFacade />
-        <View style={styles.input}>
-          <Text>Participant ID</Text>
-          <TextInput
-            style={{ height: 40, borderColor: "black", borderWidth: 1.5 }}
-            onChangeText={(text) => {
-              this.ID = text;
-            }}
-          />
-        </View>
-        <View style={styles.input}>
-          <Button
-            title="Start"
-            color="#f194ff"
-            onPress={() => Actions.camera()} //Alert.alert("user ID: ", this.ID)
-          />
-        </View>
+        <Text>Participant ID</Text>
+        <TextInput
+          style={{
+            width: "80%",
+            height: 75,
+            fontSize: 40,
+            textAlign: "center",
+            borderColor: "black",
+            borderWidth: 1.5,
+          }}
+          onChangeText={(text) => {
+            this.ID = text;
+          }}
+        />
+        <Button
+          title="Start"
+          style={{
+            width: "80%",
+            height: 100,
+          }}
+          color="#f194ff"
+          onPress={() => {
+            if (!this.ID) return;
+            UpdateParticipantToken(this.ID);
+            Actions.camera();
+          }} //Alert.alert("user ID: ", this.ID)
+        />
       </View>
     );
   }

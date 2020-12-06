@@ -33,11 +33,7 @@ app.get("/test", (req, res) => {
 });
 
 app.get("/increaserep", (req, res) => {
-  const data = 
-    { id: "test",
-      testType: 0,
-      action: "DECREASE_REM_REPS"
-    };
+  const data = { id: "test", testType: 0, action: "DECREASE_REM_REPS" };
   SendData(data);
   res.send(data);
 });

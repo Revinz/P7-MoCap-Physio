@@ -32,9 +32,9 @@ export default class ExerciseFacade extends React.Component {
 
   onMessageReceived(remoteMessage) {
     const json = JSON.stringify(remoteMessage);
-    console.log(json)
+    console.log(json);
     const data = JSON.parse(json).data;
-    console.log(data)
+    console.log(data);
     Alert.alert("NEW MESSAGE: ", JSON.stringify(data));
     return;
     switch (data.action) {
