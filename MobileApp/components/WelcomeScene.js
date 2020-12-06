@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Text, TouchableOpacity } from "react-native";
 import { Actions } from "react-native-router-flux";
 import ExerciseFacade from "./facades/ExerciseFacade";
+import { UpdateParticipantToken } from "./facades/firebaseFacade";
 
 export default class WelcomeScene extends React.Component {
   constructor(props) {
@@ -18,7 +19,9 @@ export default class WelcomeScene extends React.Component {
     return (
       <TouchableOpacity
         style={{ margin: 128 }}
-        onPress={() => Actions.camera()}
+        onPress={
+          UpdateParticipantToken("TEST_ID_TEST") /*() => Actions.camera()*/
+        }
       >
         <Text>WELCOME PAGE!</Text>
         <ExerciseFacade />

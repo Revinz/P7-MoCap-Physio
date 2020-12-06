@@ -11,9 +11,6 @@ var RNFS = require("react-native-fs");
 import Routes from "./routes.js";
 import firebase from "@react-native-firebase/app";
 import messaging from "@react-native-firebase/messaging";
-messaging()
-  .subscribeToTopic("P7")
-  .then(() => console.log("Subscribed to P7"));
 
 export default function App() {
   return <Routes />;
