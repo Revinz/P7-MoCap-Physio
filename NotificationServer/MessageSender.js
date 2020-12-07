@@ -24,6 +24,7 @@ const SendData = async (req, action) => {
     ID: req.query.id,
     testtype: req.query.type,
     action: action,
+    params: JSON.stringify(req.params),
   };
   const token = await getDeviceToken(req.query.id);
   console.log(token);

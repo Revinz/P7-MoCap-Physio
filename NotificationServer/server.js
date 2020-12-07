@@ -32,10 +32,37 @@ app.get("/test", (req, res) => {
   res.send(req.query);
 });
 
-app.get("/increaserep", (req, res) => {
-  const data = { id: "test", testType: 0, action: "DECREASE_REM_REPS" };
-  SendData(data);
-  res.send(data);
+/* Exercise endpoints */
+
+app.get("/exercise/set/:exercise", (req, res) => {
+  try {
+    console.log(req.params.exercise);
+    SendData(req, "SET_CURR_EXERCISE");
+  } catch (err) {
+    res.status(500);
+    res.send("Error while sending");
+  }
+  res.send(req.query);
+});
+
+app.get("/rep/increase", (req, res) => {
+  try {
+    SendData(req, "INCREASE_CURR_REPS");
+  } catch (err) {
+    res.status(500);
+    res.send("Error while sending");
+  }
+  res.send(req.query);
+});
+
+app.get("/set/increase", (req, res) => {
+  try {
+    SendData(req, "INCREASE_CURR_SETS");
+  } catch (err) {
+    res.status(500);
+    res.send("Error while sending");
+  }
+  res.send(req.query);
 });
 
 app.listen(port, () => {
