@@ -151,10 +151,11 @@ export default class Controller extends React.Component {
                 <p className="counter">0</p>
               </div>
               <div className="column ">
-                <label className="bold">REPETITONS in CURRENT SET</label>
+                <label className="bold">REPETITIONS IN CURRENT SET</label>
                 <label>
-                  Increase number or count as mistake. Clicking the mistake
-                  button will disable the + button for 1.25s.
+                  Press "Mistake" if it looks like the user has done a deviation
+                  from the usual movement. Press "Plus" to record each
+                  repetition. (Mistakes are not repetitions)
                 </label>
                 <div id="repCounter">
                   <button className="mistake_btn">Mistake</button>
