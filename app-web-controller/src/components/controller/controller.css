@@ -13,6 +13,10 @@
   outline: none;
 }
 
+.button:hover {
+  background-color: #316494;
+}
+
 .divider {
   margin-top: 30px;
   margin-left: 100px;
@@ -198,6 +202,10 @@ input {
   margin-right: 30px;
   border-radius: 5px;
   outline: none;
+}
+
+.mistake_btn:hover {
+  background-color: #971818;
 }
 
 .disabled {
