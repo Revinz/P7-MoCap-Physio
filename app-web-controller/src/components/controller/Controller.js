@@ -133,11 +133,6 @@ export default class Controller extends React.Component {
                   Press "+" button after each repetiton in order to record the
                   set progressing and to give audio feedback.
                 </p>
-
-                <p>
-                  Mistakes are exceptions for the set count and button is
-                  disabled for 2 seconds when that audio is played.
-                </p>
                 <p>When the increment reaches 10, a new set is started.</p>
                 <p>
                   Sets already done is a non-interactive element. Its only
