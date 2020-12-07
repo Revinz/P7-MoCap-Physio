@@ -75,195 +75,277 @@ export default class AudioManager {//extends React.Component<props> {
   
   // We have to load the audio just before playing them
   // Loading them all at startup does not work for this many files for some reason
-
-  static playAudioFeedback(exercise, currentRep) {
+  
+  //static playAudioFeedback(exercise, currentRep) {
+  static playAudioFeedback(currentRep, feedbackType) {
     var Sound = require('react-native-sound');
     Sound.setCategory('Playback'); // Enable playback in silence mode
     console.log("Giving audio feedback for exercise", exercise , "rep", currentRep)
     
-    switch(currentRep) {
-      case 0:
-        var audio_pleaseBegin = new Sound('voice_2_1_please_begin.mp4', Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
-            return;
-          }           
-          // Play the sound with an onEnd callback
-          audio_pleaseBegin.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
-            }
-          });
-        });
+    switch(feedbackType) {
+      case "No feedback":
+        // Do nothing
         break;
-      case 1:
-        var audio_1stDone = new Sound('voice_2_2_first_repetition_done', Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
-            return;
-          }           
-          // Play the sound with an onEnd callback
-          audio_1stDone.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
-            }
-          });
-        });
-        break;
-      case 2:
-        var audio_2nd = new Sound('voice_3_3_second.mp4', Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
-            return;
-          }           
-          // Play the sound with an onEnd callback
-          audio_2nd.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
-            }
-          });
-        });
-        break;
-      case 3:
-        var audio_3rd = new Sound('voice_3_4_third.mp4', Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
-            return;
-          }           
-          // Play the sound with an onEnd callback
-          audio_3rd.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
-            }
-          });
-        });
-        break;
-      case 4:
-        var audio_4th = new Sound('voice_3_5_fourth.mp4', Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
-            return;
-          }           
-          // Play the sound with an onEnd callback
-          audio_4th.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
-            }
-          });
-        });
-        break;
-      case 5:
-        var audio_5th = new Sound('voice_3_6b_fifth.mp4', Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
-            return;
-          }           
-          // Play the sound with an onEnd callback
-          audio_5th.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
-            }
-          });
-        });
-        break;
-      case 6:
-        var audio_6th = new Sound('voice_3_7_sixth.mp4', Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
-            return;
-          }           
-          // Play the sound with an onEnd callback
-          audio_6th.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
-            }
-          });
-        });
-        break;
-      case 7:
-        var audio_7th = new Sound('voice_3_8_seventh.mp4', Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
-            return;
-          }           
-          // Play the sound with an onEnd callback
-          audio_7th.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
-            }
-          });
-        });
-        break;
-      case 8:
-        var audio_8th = new Sound('voice_3_9_eighth.mp4', Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
-            return;
-          }           
-          // Play the sound with an onEnd callback
-          audio_8th.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
-            }
-          });
-        });
-        break;  
-      case 9:
-        var audio_9th = new Sound('voice_3_10_ninth.mp4', Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
-            return;
-          }           
-          // Play the sound with an onEnd callback
-          audio_9th.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
-            }
-          });
-        });
-        audio_9th = new Sound('voice_3_10_ninth.mp4', Sound.MAIN_BUNDLE);
-        audio_9th.play();
-        break;
-      case 10:
-        var audio_setDone1setRemaining = new Sound('voice_2_5_set_done_you_have_one_set_of_this_exercise_remaining.mp4', Sound.MAIN_BUNDLE, (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
-            return;
-          }           
-          // Play the sound with an onEnd callback
-          audio_setDone1setRemaining.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
-            }
-          });
-        });
-        audio_setDone1setRemaining = new Sound('voice_2_5_set_done_you_have_one_set_of_this_exercise_remaining.mp4', Sound.MAIN_BUNDLE);
-        audio_setDone1setRemaining.play();
-        break;
+
+      case "Minimal feedback":
+        
+        switch(currentRep) {
+          case 0:
+            var audio_pleaseBegin = new Sound('voice_2_1_please_begin.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_pleaseBegin.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          case 1:
+            var audio_1stDone = new Sound('voice_2_2_first_repetition_done', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_1stDone.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          case 5:
+            var audio_halfwayDone = new Sound('voice_3_6a_halfway_done.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_halfwayDone.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          case 10:
+            var audio_setDone1setRemaining = new Sound('voice_2_5_set_done_you_have_one_set_of_this_exercise_remaining.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_setDone1setRemaining.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          default:
+            console.log("Error in determining audio feedback for rep", currentRep)
+        }
+
+      case "Full feedback":
+        
+        switch(currentRep) {
+          case 0:
+            var audio_pleaseBegin = new Sound('voice_2_1_please_begin.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_pleaseBegin.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          case 1:
+            var audio_1stDone = new Sound('voice_2_2_first_repetition_done', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_1stDone.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          case 2:
+            var audio_2nd = new Sound('voice_3_3_second.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_2nd.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          case 3:
+            var audio_3rd = new Sound('voice_3_4_third.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_3rd.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          case 4:
+            var audio_4th = new Sound('voice_3_5_fourth.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_4th.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          case 5:
+            var audio_5th = new Sound('voice_3_6b_fifth.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_5th.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          case 6:
+            var audio_6th = new Sound('voice_3_7_sixth.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_6th.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          case 7:
+            var audio_7th = new Sound('voice_3_8_seventh.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_7th.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          case 8:
+            var audio_8th = new Sound('voice_3_9_eighth.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_8th.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;  
+          case 9:
+            var audio_9th = new Sound('voice_3_10_ninth.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_9th.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            audio_9th = new Sound('voice_3_10_ninth.mp4', Sound.MAIN_BUNDLE);
+            audio_9th.play();
+            break;
+          case 10:
+            var audio_setDone1setRemaining = new Sound('voice_2_5_set_done_you_have_one_set_of_this_exercise_remaining.mp4', Sound.MAIN_BUNDLE, (error) => {
+              if (error) {
+                console.log('failed to load the sound', error);
+                return;
+              }           
+              // Play the sound with an onEnd callback
+              audio_setDone1setRemaining.play((success) => {
+                if (success) {
+                  console.log('successfully finished playing');
+                } else {
+                  console.log('playback failed due to audio decoding errors');
+                }
+              });
+            });
+            break;
+          default:
+            console.log("Error in determining audio feedback for rep", currentRep)
+        }
+
       default:
-        console.log("Error in determining audio feedback for rep", currentRep)
+        console.log("Couldn't determine feedback type", feedbackType)
+        break;
     }
   }
   

@@ -3,8 +3,13 @@ import messaging from "@react-native-firebase/messaging";
 import { Alert } from "react-native";
 
 export default class ExerciseFacade extends React.Component {
+  
+  
   constructor(props) {
     super(props);
+
+    this.currentExercise = 0;
+    this.count_exercises = [[0, 0, 0, 0],[0, 0, 0, 0]];
   }
 
   componentDidMount() {
@@ -34,17 +39,29 @@ export default class ExerciseFacade extends React.Component {
     const json = JSON.stringify(remoteMessage);
     console.log(json);
     const data = JSON.parse(json).data;
-    console.log(data);
+    const params = JSON.parse(data.params)
+    console.log(data.ID);
+    console.log(data.testtype);
+    console.log(params.exercise)
     Alert.alert("NEW MESSAGE: ", JSON.stringify(data));
-    return;
+    //return;
+    console.log("data action", data.action);
     switch (data.action) {
+      
       case "SET_CURR_EXERCISE":
+        console.log("Setting exercise", data.exercise);
+        this.currentExercise = data.exercise
         break;
-      case "DECREASE_REM_REPS":
+      case "INCREASE_CURR_REPS":
+        console.log("Increasing reps");
+        this.count_exercises[0, this.currentExercise]++;
         break;
-      case "DECREASE_REM_SETS":
+      case "INCREASE_CURR_SETS":
+        console.log("Increasing sets");
+        this.count_exercises[1, this.currentExercise]++;
         break;
     }
+    console.log("Exercise", this.currentExercise, this.count_exercises)
   }
 
   render() {

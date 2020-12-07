@@ -10,7 +10,8 @@ const config = {
 if (!firebase.apps.length) firebase.initializeApp(config);
 
 const db = firebase.database();
-
+console.log(db)
+console.log(firebase.app.options)
 db.setPersistenceEnabled(true);
 
 export const UpdateParticipantToken = (uid) => {

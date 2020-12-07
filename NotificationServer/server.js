@@ -32,12 +32,31 @@ app.get("/test", (req, res) => {
   res.send(req.query);
 });
 
-app.get("/increaserep", (req, res) => {
-  const data = { id: "test", testType: 0, action: "DECREASE_REM_REPS" };
+app.get("/setexercise", (req, res) => {
+  const data = 
+    { id: "test",
+      testType: 0,
+      action: "SET_CURR_EXERCISE",
+      exercise: 0
+    };
   SendData(data);
   res.send(data);
 });
 
+app.get("/increaseset", (req, res) => {
+  const data = 
+    { id: "test",
+      testType: 0,
+      action: "INCREASE_CURR_SETS"
+    };
+  SendData(data);
+  res.send(data);
+});
+
+app.get("/increaserep", (req, res) => {
+  SendData(req, "INCREASE_CURR_REPS");
+  res.send(req.query);
+});
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
