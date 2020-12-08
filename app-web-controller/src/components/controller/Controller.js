@@ -94,11 +94,13 @@ export default class Controller extends React.Component {
               <h1> (Virtual) User Test Setup Page</h1>
               <p>Remember:</p>
               <ul>
-                <li>
-                  Start the server with 'node server.js' from the
-                  'NotificationServer' folder
-                </li>
                 <li>Be sure to give the participants unique IDs.</li>
+                <li>
+                  APK Download link:{" "}
+                  <a href="https://drive.google.com/file/d/1s4c7g9QIX2NkGo6xxdac9WZSdHpva4JW/view?usp=sharing">
+                    https://drive.google.com/file/d/1s4c7g9QIX2NkGo6xxdac9WZSdHpva4JW/view?usp=sharing
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

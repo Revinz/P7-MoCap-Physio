@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://157.230.113.27";
 
 function participantInfo(uid, testID) {
   console.log(uid, testID);
