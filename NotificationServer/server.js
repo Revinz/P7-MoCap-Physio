@@ -4,11 +4,11 @@ const app = express();
 const SendData = require("./MessageSender");
 const dotenv = require("dotenv");
 dotenv.config();
-const port = 8080;
+const port = process.env.port || 5000;
 /**
  *
  *  Run using 'node server.js'
- *  then goto to the page: http://localhost:3001
+ *  then goto to the page: http://localhost:5000
  *
  *  if dev, run with 'nodemon server.js' for live-reload
  *  first do : npm install -g nodemon
