@@ -9,8 +9,6 @@ import {
   StyleSheet,
 } from "react-native";
 import { Actions } from "react-native-router-flux";
-import ExerciseFacade from "./facades/ExerciseFacade";
-import { UpdateParticipantToken } from "./facades/firebaseFacade";
 
 export default class WelcomeScene extends React.Component {
   constructor(props) {
@@ -46,7 +44,6 @@ export default class WelcomeScene extends React.Component {
     return (
       <View style={styles.input}>
         <Text>WELCOME PAGE!</Text>
-        <ExerciseFacade />
         <Text>Participant ID</Text>
         <TextInput
           style={{
@@ -70,8 +67,7 @@ export default class WelcomeScene extends React.Component {
           color="#f194ff"
           onPress={() => {
             if (!this.ID) return;
-            UpdateParticipantToken(this.ID);
-            Actions.camera();
+            Actions.camera({ID: this.ID});
           }} //Alert.alert("user ID: ", this.ID)
         />
       </View>

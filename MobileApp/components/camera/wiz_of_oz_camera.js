@@ -15,16 +15,49 @@ import { Camera } from "expo-camera";
 import React, { useState, useEffect, useRef, Component } from "react";
 
 import AudioManager from "../AudioManager.js";
+import { UpdateParticipantToken } from "../facades/firebaseFacade";
+import ExerciseFacade from "../facades/ExerciseFacade";
 
 //audioManager.setupAudio();
 
-const CameraScene = () => {
+const CameraScene = (props) => {
   let [toggleButton, setButton] = useState(null);
   let [camera, setCamera] = useState(null);
   let [hasPermission, setHasPermission] = useState(null);
   let [type, setType] = useState(Camera.Constants.Type.back);
 
   let recording = false;
+
+  //Send token to firebase
+  UpdateParticipantToken(props.ID);
+
+  const [currExercise, setCurrExercise] = useState("squat");
+  const [exerciseProgress, updateProgress] = useState({
+    squat: {reps: 0, sets:0, maxSets: 3},
+    standing_hip_abduction: {reps: 0, sets:0, maxSets: 3},
+    step_ups: {reps: 0, sets:0, maxSets: 3},
+    single_leg_deadlift: {reps: 0, sets:0, maxSets: 3},
+    lunges: {reps: 0, sets:0, maxSets: 3},
+  });
+
+  const setProgress = async(exerciseToUpdate, newReps, newSets) => {
+    console.log("Updating progress")
+    console.log(exerciseToUpdate)
+    console.log(newReps)
+    console.log(newSets)
+    let tmpProgress = {...exerciseProgress};
+    tmpProgress[exerciseToUpdate].reps =  newReps;
+    tmpProgress[exerciseToUpdate].sets =  newSets;
+    updateProgress(exerciseProgress => tmpProgress)
+    console.log(exerciseProgress[currExercise].reps)
+  }
+  setProgress.bind(this)
+
+  const setExercise = async (exercise) => {
+    console.log("Setting curr exercise")
+    setCurrExercise(exercise)
+  }
+  setExercise.bind(this)
 
   useEffect(() => {
     (async () => {
@@ -55,6 +88,7 @@ const CameraScene = () => {
 
   return (
     <View style={styles.main}>
+      <ExerciseFacade setCurrExercise={setExercise} setProgress={setProgress} currExercise={currExercise} progress={exerciseProgress} />
       <View style={styles.header}>
         <View style={styles.lightbulb}>
           {/*<Image source={require("./images/lightbulb.png")} />*/}
@@ -75,19 +109,11 @@ const CameraScene = () => {
           <Text style={styles.boldText}>Exercise</Text>
           <View>
             <Text style={styles.standardText}>
-              SHA
+              {currExercise.split("_").join(" ")}
             </Text>
           </View>
         </View>
         <View>
-          <View>
-            <Text style={styles.boldText}>Sets left</Text>
-          </View>
-          <View>
-            <Text style={styles.standardText}>
-              1
-            </Text>
-          </View>
         </View>
         <View>
           <View>
@@ -95,7 +121,7 @@ const CameraScene = () => {
           </View>
           <View>
             <Text style={styles.standardText}>
-              1
+              {10 - exerciseProgress[currExercise].reps}
             </Text>
           </View>
         </View>
