@@ -1,32 +1,27 @@
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = "http://localhost:8080";
 
 function participantInfo(uid, testID) {
-  return `?ID=${uid}&${testID}`;
+  console.log(uid, testID);
+  return "?id=" + uid + "&type=" + testID;
 }
 
 export const IncreaseReps = async (uid, testID) => {
   const response = await fetch(
     BASE_URL + "/rep/increase" + participantInfo(uid, testID)
-  )
-    .then((r) => r.json())
-    .catch((err) => console.log(err));
-  console.log(response);
+  );
+  return response.status;
 };
 
-// export const IncreaseSets = async (exercise, uid, testID) => {
-//   const response = await fetch(
-//     BASE_URL + "/set/increase/" + exercise + participantInfo(uid, testID)
-//   )
-//     .then((r) => r.json())
-//     .catch((err) => console.log(err));
-//   console.log(response);
-// };
+export const SendMistake = async (uid, testID) => {
+  const response = await fetch(
+    BASE_URL + "/exercise/mistake" + participantInfo(uid, testID)
+  );
+  return response.status;
+};
 
 export const SetExercise = async (exercise, uid, testID) => {
   const response = await fetch(
     BASE_URL + "/exercise/set/" + exercise + participantInfo(uid, testID)
-  )
-    .then((r) => r.json())
-    .catch((err) => console.log(err));
-  console.log(response);
+  );
+  return response.status;
 };

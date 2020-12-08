@@ -1,14 +1,28 @@
 import React from "react";
 import "./controller.css";
-import { IncreaseReps, IncreaseSets, SetExercise } from "../../ExerciseFacade";
+import {
+  IncreaseReps,
+  IncreaseSets,
+  SetExercise,
+  SendMistake,
+} from "../../ExerciseFacade";
 
+const MAX_REPS_PER_SET = 10;
 export default class Controller extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      activeExercise: "squat",
+      uid: "",
       testType: 0,
+      activeExercise: "squat",
+      exercises: {
+        squat: { reps: 0, sets: 0 },
+        single_leg_deadlift: { reps: 0, sets: 0 },
+        step_ups: { reps: 0, sets: 0 },
+        lunges: { reps: 0, sets: 0 },
+        standing_hip_abduction: { reps: 0, sets: 0 },
+      },
     };
   }
 
@@ -17,14 +31,53 @@ export default class Controller extends React.Component {
   }
 
   changeExercise(exercise) {
-    this.setState({ activeExercise: exercise });
-    SetExercise(exercise);
-    console.log("Changed exercise to: ", exercise);
+    SetExercise(exercise, this.state.uid, this.state.testType).then(
+      (statusCode) => {
+        if (statusCode === 200) {
+          this.setState({ activeExercise: exercise });
+          console.log("Changed exercise to: ", exercise);
+        } else {
+          alert(
+            "Failed to set exercise to: " +
+              exercise.replaceAll("_", " ").toUpperCase()
+          );
+        }
+      }
+    );
   }
 
   changeTestType(testID) {
     this.setState({ testType: testID });
     console.log(testID);
+  }
+
+  IncreaseRep(exercise) {
+    IncreaseReps(this.state.uid, this.state.testType).then((statusCode) => {
+      if (statusCode != 200) {
+        alert("Failed to increase reps for the participant.");
+        return;
+      }
+
+      let tmpExercises = this.state.exercises;
+      console.log(tmpExercises);
+      tmpExercises[exercise].reps++;
+
+      //Increase sets if hit max reps per set.
+      if (tmpExercises[exercise].reps >= MAX_REPS_PER_SET) {
+        tmpExercises[exercise].sets++;
+        tmpExercises[exercise].reps = 0;
+      }
+
+      this.setState(tmpExercises);
+    });
+  }
+
+  onMistakeClicked() {
+    SendMistake(this.state.uid, this.state.testType).then((statusCode) => {
+      if (statusCode != 200) {
+        alert("Failed to send mistake notification to user.");
+      }
+    });
   }
 
   isExerciseActive(exercise) {
@@ -39,16 +92,14 @@ export default class Controller extends React.Component {
             <div className="section-header"></div>
             <div className="section-content">
               <h1> (Virtual) User Test Setup Page</h1>
-              <p>
-                Remember:
-                <ul>
-                  <li>
-                    Start the server with 'node server.js' from the
-                    'NotificationServer' folder
-                  </li>
-                  <li>Be sure to give the participants unique IDs.</li>
-                </ul>
-              </p>
+              <p>Remember:</p>
+              <ul>
+                <li>
+                  Start the server with 'node server.js' from the
+                  'NotificationServer' folder
+                </li>
+                <li>Be sure to give the participants unique IDs.</li>
+              </ul>
             </div>
           </div>
           <div className="section">
@@ -58,7 +109,11 @@ export default class Controller extends React.Component {
             <div className="section-content" id="participant-info">
               <div className="column">
                 <label>Add the participant's unique ID below:</label>
-                <input placeholder="Unique ID" type="text" />
+                <input
+                  onChange={(e) => this.setState({ uid: e.target.value })}
+                  placeholder="Unique ID"
+                  type="text"
+                />
               </div>
               <div className="column">
                 <label>Condition</label>
@@ -66,9 +121,9 @@ export default class Controller extends React.Component {
                   value={this.state.testType}
                   onChange={(e) => this.changeTestType(e.target.value)}
                 >
-                  <option value={0}>No Audio</option>
-                  <option value={1}>All Audio</option>
-                  <option value={2}>Important Audio Only</option>
+                  <option value={0}>No Audio Feedback</option>
+                  <option value={1}>Minimal Audio Feedback</option>
+                  <option value={2}>All Audio Feedback</option>
                 </select>
               </div>
             </div>
@@ -143,7 +198,9 @@ export default class Controller extends React.Component {
               <div className="column right-divider">
                 <label className="bold">SETS ALREADY DONE</label>
                 <label>Non-interactive element. Status.</label>
-                <p className="counter">0</p>
+                <p className="counter">
+                  {this.state.exercises[this.state.activeExercise].sets}
+                </p>
               </div>
               <div className="column ">
                 <label className="bold">REPETITIONS IN CURRENT SET</label>
@@ -153,9 +210,21 @@ export default class Controller extends React.Component {
                   repetition. (Mistakes are not repetitions)
                 </label>
                 <div id="repCounter">
-                  <button className="mistake_btn">Mistake</button>
-                  <p className="counter no_right_border">0</p>
-                  <button className="button_small">+</button>
+                  <button
+                    className="mistake_btn"
+                    onClick={() => this.onMistakeClicked()}
+                  >
+                    Mistake
+                  </button>
+                  <p className="counter no_right_border">
+                    {this.state.exercises[this.state.activeExercise].reps}
+                  </p>
+                  <button
+                    className="button_small"
+                    onClick={() => this.IncreaseRep(this.state.activeExercise)}
+                  >
+                    +
+                  </button>
                 </div>
               </div>
             </div>
