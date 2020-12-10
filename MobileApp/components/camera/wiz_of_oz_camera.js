@@ -9,6 +9,7 @@ import {
   Image,
 } from "react-native";
 
+import { useKeepAwake } from 'expo-keep-awake';
 import { Permissions } from "expo";
 //import { captureRef } from 'react-native-view-shot';
 import { Camera } from "expo-camera";
@@ -21,6 +22,9 @@ import ExerciseFacade from "../facades/ExerciseFacade";
 //audioManager.setupAudio();
 
 const CameraScene = (props) => {
+  console.log("A")
+  useKeepAwake();
+  console.log("B")
   let [toggleButton, setButton] = useState(null);
   let [camera, setCamera] = useState(null);
   let [hasPermission, setHasPermission] = useState(null);
