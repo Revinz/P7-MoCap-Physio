@@ -95,7 +95,7 @@ const CameraScene = (props) => {
       <ExerciseFacade setCurrExercise={setExercise} setProgress={setProgress} currExercise={currExercise} progress={exerciseProgress} />
       <View style={styles.header}>
         <View style={styles.lightbulb}>
-          {/*<Image source={require("./images/lightbulb.png")} />*/}
+          {<Image source={require("./lightbulb.png")} />}
         </View>
         <View style={styles.hintText}>
           <View style={{ flex: 1, fontSize: 12 }}>
