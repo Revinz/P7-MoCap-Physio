@@ -156,12 +156,6 @@ export default class Controller extends React.Component {
                   Single Leg Deadlift
                 </button>
                 <button
-                  className={"button " + this.isExerciseActive("step_ups")}
-                  onClick={() => this.changeExercise("step_ups")}
-                >
-                  Step Ups
-                </button>
-                <button
                   className={"button " + this.isExerciseActive("lunges")}
                   onClick={() => this.changeExercise("lunges")}
                 >
