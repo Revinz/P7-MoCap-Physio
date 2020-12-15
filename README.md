@@ -33,5 +33,3 @@ Note: this project is only tested on Android 8+.
 9. Place it in the folder "./MobileApp/android"
 
 10. Start the NotificationServer using node server.js in the NotificationServer folder
-
-11.
