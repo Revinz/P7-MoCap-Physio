@@ -22,7 +22,6 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
 from numpy.random import seed
 from tensorflow import optimizers
 
@@ -103,12 +102,6 @@ x_train.drop(["FolderID"], inplace=True, axis=1)
 x_train.drop(["Frame Number"], inplace=True, axis=1)
 x_train.drop(x_train.columns[0], inplace=True, axis=1)  # Remove the mystery first column
 
-# Unnecessary Joints
-#x_train.drop(["Right Eye"], inplace=True, axis=1)
-#x_train.drop(["Left Eye"], inplace=True, axis=1)
-#x_train.drop(["Right Ear"], inplace=True, axis=1)
-#x_train.drop(["Left Ear"], inplace=True, axis=1)
-
 # Test set below
 x_test.drop(["exercise"], inplace=True, axis=1)
 x_test.drop(["File Path"], inplace=True, axis=1)
@@ -117,10 +110,31 @@ x_test.drop(["Frame Number"], inplace=True, axis=1)
 x_test.drop(x_test.columns[0], inplace=True, axis=1)  # Remove the mystery first column
 
 # Unnecessary Joints
-#x_test.drop(["Right Eye"], inplace=True, axis=1)
-#x_test.drop(["Left Eye"], inplace=True, axis=1)
-#x_test.drop(["Right Ear"], inplace=True, axis=1)
-#x_test.drop(["Left Ear"], inplace=True, axis=1)
+# x_train.drop(["Right Eye"], inplace=True, axis=1)
+# x_train.drop(["Left Eye"], inplace=True, axis=1)
+# x_train.drop(["Right Ear"], inplace=True, axis=1)
+# x_train.drop(["Left Ear"], inplace=True, axis=1)
+#
+# # Unnecessary Joints
+# x_test.drop(["Right Eye"], inplace=True, axis=1)
+# x_test.drop(["Left Eye"], inplace=True, axis=1)
+# x_test.drop(["Right Ear"], inplace=True, axis=1)
+# x_test.drop(["Left Ear"], inplace=True, axis=1)
+
+#Upper Body
+# x_train.drop(["Right Shoulder"], inplace=True, axis=1)
+# x_train.drop(["Left Shoulder"], inplace=True, axis=1)
+# x_train.drop(["Left Wrist"], inplace=True, axis=1)
+# x_train.drop(["Right Wrist"], inplace=True, axis=1)
+# x_train.drop(["Left Elbow"], inplace=True, axis=1)
+# x_train.drop(["Right Elbow"], inplace=True, axis=1)
+
+# x_test.drop(["Right Shoulder"], inplace=True, axis=1)
+# x_test.drop(["Left Shoulder"], inplace=True, axis=1)
+# x_test.drop(["Left Wrist"], inplace=True, axis=1)
+# x_test.drop(["Right Wrist"], inplace=True, axis=1)
+# x_test.drop(["Left Elbow"], inplace=True, axis=1)
+# x_test.drop(["Right Elbow"], inplace=True, axis=1)
 
 # Split features into x & y
 columns = list(x_train)
@@ -408,32 +422,48 @@ x_test = array(x_test).reshape(test_nSeq, nFrames, dataP)  # Reshape 2D - 3D to 
 #
 # results = model.predict(x_test, verbose=0)
 
-# MODEL 10
+# MODEL 10: 0.135 seconds. 57% accuracy
 model = Sequential()
 
 #Stops the model early if value_loss dip
 #callback = keras.callbacks.EarlyStopping(monitor='val_accuracy', min_delta=0.001, patience=200, verbose=0, mode='auto', restore_best_weights=True)
 #model.add(Dropout(0.25))
 
-model.add(Bidirectional(LSTM(200, activation='tanh', return_sequences=True, input_shape=(nFrames, dataP))))
-#model.add(Dropout(0.3)) # Very nice dropout
-model.add(Bidirectional(LSTM(100, activation='tanh', return_sequences=True, dropout=0.3)))
-#model.add(Bidirectional(LSTM(50, activation='relu', return_sequences=True)))
-model.add(Bidirectional(LSTM(50, activation='tanh', return_sequences=True, dropout=0.3)))
-model.add(Bidirectional(LSTM(25, activation='tanh', dropout=0.3)))
+model.add(Bidirectional(LSTM(272, activation='tanh', return_sequences=True, input_shape=(nFrames, dataP))))
+model.add(Dropout(0.3)) # Very nice dropout
+model.add(Bidirectional(LSTM(136, activation='tanh', return_sequences=True, dropout=0.2)))
+#model.add(Bidirectional(LSTM(75, activation='relu', return_sequences=True)))
+model.add(Bidirectional(LSTM(68, activation='tanh', dropout=0.2)))
+#model.add(Bidirectional(LSTM(25, activation='tanh')))
 model.add(Dense(68, activation='tanh'))
 model.add(Dropout(0.2))
-model.add(Dense(34, activation='tanh'))
+model.add(Dense(dataP, activation='tanh'))
 model.add(Dropout(0.2))
 model.add(Dense(5, activation='softmax'))
 
 model.compile(loss="sparse_categorical_crossentropy", metrics=['accuracy'], optimizer='adam')
 
 start_time = time.time()
-history = model.fit(x_train, y_train, epochs=200, validation_data=(x_test, y_test)) #  ,callbacks=[callback, shuffle=True, batch_size=train_nSeq
+history = model.fit(x_train, y_train, epochs=100, validation_data=(x_test, y_test), batch_size=train_nSeq) #  ,callbacks=[callback, shuffle=True, batch_size=train_nSeq
 print("Fit time: %0.2f seconds" % (time.time() - start_time))
 
 results = model.predict(x_test, verbose=0)
+#FASTEST MODEL: 0.055 seconds, but only 45% prediction
+#model = Sequential()
+
+#model.add(Bidirectional(LSTM(200, activation='tanh', dropout=0.5, input_shape=(nFrames, dataP))))
+#model.add(Dense(dataP, activation='tanh'))
+#model.add(Dropout(0.2))
+#model.add(Dense(5, activation='softmax'))
+
+#model.compile(loss="sparse_categorical_crossentropy", metrics=['accuracy'], optimizer='adam')
+
+#start_time = time.time()
+#history = model.fit(x_train, y_train, epochs=100, validation_data=(x_test, y_test), batch_size=train_nSeq) #  ,callbacks=[callback, shuffle=True, batch_size=train_nSeq
+#print("Fit time: %0.2f seconds" % (time.time() - start_time))
+
+#results = model.predict(x_test, verbose=0)
+
 # MODEL 11
 # model = Sequential()
 #

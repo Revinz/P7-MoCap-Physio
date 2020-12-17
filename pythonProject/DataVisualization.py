@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import sklearn
 # ______________________________________________Data preparation________________________________________
-data = pd.read_csv('V5training_2ex_10frames_2skip_sorted.csv')  # Which dataset to read, change versions with V1, V2, V3, etc.
-
-data["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
+data = pd.read_csv('V7training_10ex_5frames_3skip_sorted.csv')  # Which dataset to read, change versions with V1, V2, V3, etc.
+data["exercise"].replace({"ForwardLunge": 0, "SingleLegDeadlift": 1, "Squat": 2, "StandingHipAbduction": 3, "StepUps": 4}, inplace=True)
+#data["exercise"].replace({"ClamShells": 0, "GluteBridge": 1, "SingleLegDeadlift": 2, "Squat": 3}, inplace=True)
 target = data["exercise"]  # Extracts only the target for later prediction
 
 nFrames = np.amax(data["Frame Number"]) + 1  # Length of frames pr. Sequences.
@@ -24,6 +24,20 @@ data.drop(["FolderID"], inplace=True, axis=1)
 data.drop(["Frame Number"], inplace=True, axis=1)
 data.drop(data.columns[0], inplace=True, axis=1)  # Remove the mystery first column
 
+# Unnecessary Joints
+data.drop(["Right Eye"], inplace=True, axis=1)
+data.drop(["Left Eye"], inplace=True, axis=1)
+data.drop(["Right Ear"], inplace=True, axis=1)
+data.drop(["Left Ear"], inplace=True, axis=1)
+
+#Upper Body
+#data.drop(["Right Shoulder"], inplace=True, axis=1)
+#data.drop(["Left Shoulder"], inplace=True, axis=1)
+data.drop(["Left Wrist"], inplace=True, axis=1)
+data.drop(["Right Wrist"], inplace=True, axis=1)
+data.drop(["Left Elbow"], inplace=True, axis=1)
+data.drop(["Right Elbow"], inplace=True, axis=1)
+
 columns = list(data)
 for i in columns:
     data[[i + "X", i + "Y"]] = data[[i][0]].str.split(",", expand=True)
@@ -34,9 +48,9 @@ for i in columns:
 data = data.astype(np.float32)
 data = pd.DataFrame(data).to_numpy()
 target = pd.DataFrame(target).to_numpy()
-data = array(data).reshape(nSeq, nFrames, 34)
+data = array(data).reshape(nSeq, nFrames, 18)
 data = data / np.amax(data)
-target = target / 3  # 3+1 is number of possible exercises
+target = target / 4  # 3+1 is number of possible exercises
 # Visualize data
 df = data
 # Reshape into 2d array
@@ -60,8 +74,8 @@ ax.set_zlabel('pca-three')
 plt.show()
 # TSNE 2D
 time_start = time.time()
-tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300, random_state=1) # Remove r_state for diverse results
-tsne_results = tsne.fit_transform(df)
+tsne = TSNE(n_components=2, verbose=1, perplexity=30, n_iter=300, random_state=1) # Remove r_state for diverse results
+tsne_results = tsne.fit_transform(df) # https://towardsdatascience.com/why-you-are-using-t-sne-wrong-502412aab0c0 states that perplexity should be less than data points
 print('t-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start))
 TSNE1 = tsne_results[:, 0]
 TSNE2 = tsne_results[:, 1]
@@ -69,8 +83,8 @@ TSNE2 = tsne_results[:, 1]
 plt.figure(figsize=(16, 7))
 ax1 = plt.subplot(1, 2, 1)
 sns.scatterplot(
-    x=PCA1, y=PCA2, hue=target[:, 0], palette=sns.color_palette("hls", 4), data=df, legend="full", alpha=1, ax=ax1)
+    x=PCA1, y=PCA2, hue=target[:, 0], palette=sns.color_palette("hls", 5), data=df, legend="full", alpha=1, ax=ax1)
 ax2 = plt.subplot(1, 2, 2)
 sns.scatterplot(
-    x=TSNE1, y=TSNE2, hue=target[:,0], palette=sns.color_palette("hls", 4), data=df, legend="full", alpha=1, ax=ax2)
+    x=TSNE1, y=TSNE2, hue=target[:,0], palette=sns.color_palette("hls", 5), data=df, legend="full", alpha=1, ax=ax2)
 plt.show()
