@@ -16,6 +16,7 @@ target = data["exercise"]  # Extracts only the target for later prediction
 nFrames = np.amax(data["Frame Number"]) + 1  # Length of frames pr. Sequences.
 target = target[0::nFrames]  # Splits target into the total number of sequences
 nSeq = len(target)  # Total number of sequences
+dataP = 26
 
 # Remove the columns we don't need.
 data.drop(["exercise"], inplace=True, axis=1)
@@ -33,10 +34,10 @@ data.drop(["Left Ear"], inplace=True, axis=1)
 #Upper Body
 #data.drop(["Right Shoulder"], inplace=True, axis=1)
 #data.drop(["Left Shoulder"], inplace=True, axis=1)
-data.drop(["Left Wrist"], inplace=True, axis=1)
-data.drop(["Right Wrist"], inplace=True, axis=1)
-data.drop(["Left Elbow"], inplace=True, axis=1)
-data.drop(["Right Elbow"], inplace=True, axis=1)
+#data.drop(["Left Wrist"], inplace=True, axis=1)
+#data.drop(["Right Wrist"], inplace=True, axis=1)
+#data.drop(["Left Elbow"], inplace=True, axis=1)
+#data.drop(["Right Elbow"], inplace=True, axis=1)
 
 columns = list(data)
 for i in columns:
@@ -48,7 +49,7 @@ for i in columns:
 data = data.astype(np.float32)
 data = pd.DataFrame(data).to_numpy()
 target = pd.DataFrame(target).to_numpy()
-data = array(data).reshape(nSeq, nFrames, 18)
+data = array(data).reshape(nSeq, nFrames, dataP)
 data = data / np.amax(data)
 target = target / 4  # 3+1 is number of possible exercises
 # Visualize data
